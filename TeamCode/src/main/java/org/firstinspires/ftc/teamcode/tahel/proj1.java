@@ -23,19 +23,19 @@ public class proj1 extends LinearOpMode {
             return;
         }
         resetRuntime();
-
-        frontRight.setPower(1);
-        frontLeft.setPower(1);
-        backRight.setPower(1);
-        backLeft.setPower(1);
-
+        
         while (opModeIsActive()){
-
+            double p2 = (gamepad1.right_stick_x-gamepad1.right_stick_y) / Math.sqrt(2);
+            double p1 = (-gamepad1.right_stick_x-gamepad1.right_stick_y) / Math.sqrt(2);
+            double bigger = Math.max(Math.abs(p1), Math.abs(p2));
+            if(bigger>1){
+                p1 /= bigger;
+                p2 /= bigger;
+            }
+            frontRight.setPower(p2);
+            frontLeft.setPower(p1);
+            backRight.setPower(p1);
+            backLeft.setPower(p2);
         }
-
-        frontRight.setPower(0);
-        frontLeft.setPower(0);
-        backRight.setPower(0);
-        backLeft.setPower(0);
     }
 }
