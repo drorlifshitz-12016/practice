@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class proj1 extends LinearOpMode {
+public class DriveTrain extends LinearOpMode {
     @Override
     public void runOpMode(){
 
