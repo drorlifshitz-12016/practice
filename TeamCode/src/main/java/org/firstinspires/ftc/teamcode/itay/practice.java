@@ -20,44 +20,38 @@ public class practice extends LinearOpMode {
 
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
-        double inPosition = 0.7;
-        double highLevel1 = 0.055;
-        double highLevel2 = 0.06;
-        double highLevel3 = 0.09;
-        double highLevel4 = 0.13;
-        double highLevel5 = 0.17;
+        double[] highets = {0.7,0.055,0.06,0.09,0.13,0.17};
 
-        grabberLeft.setPosition(inPosition);
-        grabberRight.setPosition(inPosition);
+        grabberRight.setPosition(highets[0]);
+        grabberLeft .setPosition(highets[0]);
 
         waitForStart();
         if(isStopRequested()){
             return;
         }
 
-
         resetRuntime();
         while (opModeIsActive()){
 
             if(gamepad1.left_trigger > 0.08) {
-                grabberRight.setPosition(highLevel1);
-                grabberLeft.setPosition(highLevel1);
+                grabberRight.setPosition(highets[1]);
+                grabberLeft .setPosition(highets[1]);
 
             }else if(gamepad1.dpad_up) {
-                grabberRight.setPosition(highLevel5);
-                grabberLeft.setPosition(highLevel5);
+                grabberRight.setPosition(highets[5]);
+                grabberLeft .setPosition(highets[5]);
 
             }else if(gamepad1.dpad_right) {
-                grabberRight.setPosition(highLevel4);
-                grabberLeft.setPosition(highLevel4);
+                grabberRight.setPosition(highets[4]);
+                grabberLeft .setPosition(highets[4]);
 
             }else if(gamepad1.dpad_down) {
-                grabberRight.setPosition(highLevel3);
-                grabberLeft.setPosition(highLevel3);
+                grabberRight.setPosition(highets[3]);
+                grabberLeft .setPosition(highets[3]);
 
             }else if(gamepad1.dpad_left){
-                grabberRight.setPosition(highLevel2);
-                grabberLeft.setPosition(highLevel2);
+                grabberRight.setPosition(highets[2]);
+                grabberLeft .setPosition(highets[2]);
 
             }
         }
