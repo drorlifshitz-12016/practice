@@ -52,8 +52,13 @@ public class practice extends LinearOpMode {
             }else if(gamepad1.dpad_left){
                 grabberRight.setPosition(highets[2]);
                 grabberLeft .setPosition(highets[2]);
-
             }
+
+            if(gamepad1.dpad_up && grabberLeft.getPosition() == highets[5]){
+                grabberLeft .setPosition(highets[0]);
+                grabberRight.setPosition(highets[0]);
+            }
+
         }
     }
 }
