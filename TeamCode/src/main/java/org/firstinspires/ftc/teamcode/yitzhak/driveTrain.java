@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class testing extends LinearOpMode {
+public class driveTrain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -24,21 +24,20 @@ public class testing extends LinearOpMode {
         }
         resetRuntime();
 
-        double t;
         double x;
         double y;
         while (opModeIsActive()){
             y = -gamepad1.left_stick_y;
-            x =  gamepad1.left_stick_x;
-            t =  gamepad1.right_stick_x;
+            x = gamepad1.left_stick_x;
 
             telemetry.addData("x", x);
             telemetry.update();
-            frontRight.setPower(y-x-t);
-            frontLeft .setPower(y+x+t);
-            backRight .setPower(y+x-t);
-            backLeft  .setPower(y-x+t);
-            
+            frontRight.setPower(y-x);
+            frontLeft .setPower(y+x);
+            backRight .setPower(y+x);
+            backLeft  .setPower(y-x);
+
+
         }
 
     }
