@@ -25,6 +25,9 @@ public class practice extends LinearOpMode {
         grabberRight.setPosition(highets[0]);
         grabberLeft .setPosition(highets[0]);
 
+        boolean last_y;
+        boolean dpad = false;
+
         waitForStart();
         if(isStopRequested()){
             return;
@@ -33,32 +36,30 @@ public class practice extends LinearOpMode {
         resetRuntime();
         while (opModeIsActive()){
 
-            if(gamepad1.left_trigger > 0.08) {
+            last_y = dpad;
+            dpad = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
+
+            if(dpad && !last_y) {
+                // do your thing
+                if (gamepad1.dpad_up) {
+                    grabberLeft.setPosition(highets[5]);
+                    grabberRight.setPosition(highets[5]);
+                } else if (gamepad1.dpad_right) {
+                    grabberLeft.setPosition(highets[4]);
+                    grabberRight.setPosition(highets[4]);
+                } else if (gamepad1.dpad_down) {
+                    grabberLeft.setPosition(highets[3]);
+                    grabberRight.setPosition(highets[3]);
+                } else if (gamepad1.dpad_left) {
+                    grabberLeft.setPosition(highets[2]);
+                    grabberRight.setPosition(highets[2]);
+                }
+            }
+
+            if (gamepad1.left_trigger > 0.08) {
                 grabberRight.setPosition(highets[1]);
-                grabberLeft .setPosition(highets[1]);
-
-            }else if(gamepad1.dpad_up) {
-                grabberRight.setPosition(highets[5]);
-                grabberLeft .setPosition(highets[5]);
-
-            }else if(gamepad1.dpad_right) {
-                grabberRight.setPosition(highets[4]);
-                grabberLeft .setPosition(highets[4]);
-
-            }else if(gamepad1.dpad_down) {
-                grabberRight.setPosition(highets[3]);
-                grabberLeft .setPosition(highets[3]);
-
-            }else if(gamepad1.dpad_left){
-                grabberRight.setPosition(highets[2]);
-                grabberLeft .setPosition(highets[2]);
+                grabberLeft.setPosition(highets[1]);
             }
-
-            if(gamepad1.dpad_up && grabberLeft.getPosition() == highets[5]){
-                grabberLeft .setPosition(highets[0]);
-                grabberRight.setPosition(highets[0]);
-            }
-
         }
     }
 }
