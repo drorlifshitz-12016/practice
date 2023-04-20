@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class driveTrain extends LinearOpMode {
+public class check extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");

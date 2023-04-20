@@ -18,6 +18,7 @@ public class testing extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         waitForStart();
         if(isStopRequested()){
             return;
@@ -34,12 +35,25 @@ public class testing extends LinearOpMode {
 
             telemetry.addData("x", x);
             telemetry.update();
-            frontRight.setPower(y-x-t);
-            frontLeft .setPower(y+x+t);
-            backRight .setPower(y+x-t);
-            backLeft  .setPower(y-x+t);
+            double fR = (y-x-t);
+            double fL = (y+x+t);
+            double bR = (y+x-t);
+            double bL = (y-x+t);
+
+            double max1 = Math.max(fR , fL);
+            double max2 = Math.max(bR , bL);
+            double maxF = Math.max(max2 , max1);
+
+            fR /= maxF;
+            fL /= maxF;
+            bR /= maxF;
+            bL /= maxF;
+
+            frontRight.setPower(fR);
+            frontLeft .setPower(fL);
+            backRight .setPower(bR);
+            backLeft  .setPower(bL);
             
         }
-
     }
 }
