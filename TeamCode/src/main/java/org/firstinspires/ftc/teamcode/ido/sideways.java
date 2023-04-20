@@ -31,7 +31,7 @@ public class sideways extends LinearOpMode {
         while (opModeIsActive()){
             frontRight.setPower(gamepad1.left_stick_x);
             frontLeft .setPower(gamepad1.left_stick_x);
-            backRight .setPower(gamepad1.left_stick_x);
+            backRight .setPower(- gamepad1.left_stick_x);
             backLeft  .setPower(gamepad1.left_stick_x);
         }
 

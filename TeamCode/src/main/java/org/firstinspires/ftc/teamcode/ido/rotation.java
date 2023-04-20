@@ -17,8 +17,7 @@ public class rotation extends LinearOpMode {
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         waitForStart();
         if(isStopRequested()){
@@ -28,7 +27,7 @@ public class rotation extends LinearOpMode {
 
         while (opModeIsActive()){
             frontRight.setPower(gamepad1.right_stick_x);
-            frontLeft .setPower(-gamepad1.right_stick_x);
+            frontLeft .setPower(gamepad1.right_stick_x);
             backRight .setPower(gamepad1.right_stick_x);
             backLeft  .setPower(gamepad1.right_stick_x);
         }
