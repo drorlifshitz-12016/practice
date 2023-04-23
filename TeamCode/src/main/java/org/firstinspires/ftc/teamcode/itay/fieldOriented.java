@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.itay;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
 public class fieldOriented extends LinearOpMode {
@@ -18,27 +23,35 @@ public class fieldOriented extends LinearOpMode {
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         // endregion
 
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
         // region SET MOTOR DIRECTION
         // reversing the right motors in order to have intuition for their movement direction
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight .setDirection(DcMotorSimple.Direction.REVERSE);
         // endregion
 
-        double x1 = 0;
-        double y1 = 0;
 
-        double beta = 0;
-        double alpha = Math.atan(y1/x1);
+
+        double x1;
+        double y1;
+
+        double beta;
 
         double x2;
         double y2;
 
         double L;
 
+        double alpha;
+
         waitForStart();
         if (isStopRequested()) { return; }
         resetRuntime();
-
 
 
             while (opModeIsActive()){
@@ -46,19 +59,21 @@ public class fieldOriented extends LinearOpMode {
             x1 = gamepad1.left_stick_x;
             y1 = -gamepad1.left_stick_y;
 
+            alpha = Math.atan2(y1, x1);
+            beta = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
             L = Math.sqrt(x1 * x1 + y1 * y1);
 
-            x2  = Math.cos(alpha + beta);
+            x2 = L * Math.cos(alpha + beta);
             y2 = L * Math.sin(alpha + beta);
 
                 // region MOTOR POWER CALCULATION
                 // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
                 //                      [      straight       ] [       lateral       ] [         turn         ]
-                double frontRightPower = gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x;
-                double frontLeftPower  = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
-                double backRightPower  = gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x;
-                double backLeftPower   = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
+                double frontRightPower =          y2           +          x2           + gamepad1.right_stick_x;
+                double frontLeftPower  =          y2           -          x2           - gamepad1.right_stick_x;
+                double backRightPower  =          y2           -          x2           + gamepad1.right_stick_x;
+                double backLeftPower   =          y2           +          x2           - gamepad1.right_stick_x;
                 // endregion
 
                 // region NORMALIZE MOTOR POWER
