@@ -35,18 +35,14 @@ public class fieldOriented extends LinearOpMode {
         backRight .setDirection(DcMotorSimple.Direction.REVERSE);
         // endregion
 
-
-
         double x1;
         double y1;
-
-        double beta;
 
         double x2;
         double y2;
 
         double L;
-
+        double beta;
         double alpha;
 
         waitForStart();
