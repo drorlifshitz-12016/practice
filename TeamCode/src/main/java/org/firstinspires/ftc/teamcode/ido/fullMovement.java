@@ -22,7 +22,9 @@ public class fullMovement extends LinearOpMode{
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight .setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+        double y = gamepad1.left_stick_y;
+        double x = gamepad2.left_stick_x;
+        double t = gamepad1.right_stick_x;
 
         waitForStart();
         if(isStopRequested()){
@@ -33,10 +35,10 @@ public class fullMovement extends LinearOpMode{
         resetRuntime();
 
         while (opModeIsActive()){
-            frontRight.setPower((-gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x) );
-            frontLeft .setPower(( gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x) );
-            backRight .setPower((-gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x) );
-            backLeft  .setPower(( gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x) );
+            frontRight.setPower(y+x+t);
+            frontLeft .setPower(y-x-t);
+            backRight .setPower(y-x+t);
+            backLeft  .setPower(y+x-t);
         }
 
         frontRight.setPower(0);
