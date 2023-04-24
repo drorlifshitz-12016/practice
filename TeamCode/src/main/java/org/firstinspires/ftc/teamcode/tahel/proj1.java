@@ -1,11 +1,25 @@
 package org.firstinspires.ftc.teamcode.tahel;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 @TeleOp
 public class proj1 extends LinearOpMode {
+
+    public double[] get_x2_y2 (double angle, double x1, double y1){
+        double len = Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2));
+        double alfa = Math.atan2(y1, x1);
+        double x2 = len * Math.cos(alfa + angle);
+        double y2 = len * Math.sin(alfa + angle);
+        return new double[]{x2, y2};
+    }
 
     public double MAX(double n1, double n2, double n3, double n4){
         double bigger1 = Math.max(n1, n2);
@@ -29,6 +43,46 @@ public class proj1 extends LinearOpMode {
 
         // endregion
 
+        double alpha;
+
+        //imu - A sensor that contains a GYRO sensor, which we use to detect the orientation
+        //of the robot at any given moment, and using the information for pitch-based travel
+
+        // define new value - imu type BNO055IMU
+        BNO055IMU imu;
+
+        // asks from the BNO055IMU.class to get the imu sensor
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // changes degrees to radians
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
+        waitForStart();
+        if (isStopRequested()) {
+            return;
+        }
+        resetRuntime();
+
+        while (opModeIsActive()) {
+        }
+
+        //obtain the current orientation of the robot.
+        //AxesReference.INTRINSIC - specifies the coordinate system that the angles should be returned in.
+        //AngleUnit.RADIANS specifies that the angles should be returned in radians.
+        double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+        double x1 = gamepad1.left_stick_x;
+        double y1 = gamepad1.left_stick_y;
+        double x2, y2;
+        double[] x2_y2 = get_x2_y2(angle, x1, y1);
+        x2 = x2_y2[0];
+        y2 = x2_y2[1];
+
+
+
+
         // region WAIT FOR START
         waitForStart();
         if(isStopRequested()){
@@ -40,14 +94,13 @@ public class proj1 extends LinearOpMode {
         while (opModeIsActive()){
             // region MOTOR POWER CALCULATION
             // calculating the motor powers based on the three basic movements (straight, lateral and turn)
-            //            [      straight       ] [       lateral       ] [         turn         ]
-            double p1 = - gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x;
-            double p2 =   gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x;
-            double p3 =   gamepad1.right_stick_x - gamepad1.right_stick_y + gamepad1.left_stick_x;
-            double p4 = - gamepad1.right_stick_x - gamepad1.right_stick_y - gamepad1.left_stick_x;
+            //            [      straight       ] [       lateral       ] [         turn          ]
+            double p1 = -           x2           -           y2          +  gamepad1.left_stick_x;
+            double p2 =             x2           -           y2          -  gamepad1.left_stick_x;
+            double p3 =             x2           -           y2          +  gamepad1.left_stick_x;
+            double p4 = -           x2           -           y2          -  gamepad1.left_stick_x;
             // endregion
-            double x1 = gamepad1.left_stick_x;
-            double y1 = gamepad1.left_stick_y;
+
             // region NORMALIZE MOTOR POWER
 
             // finds the highest absolute value of the non normalized motor powers
@@ -67,6 +120,8 @@ public class proj1 extends LinearOpMode {
             backRight.setPower(p3);
             backLeft.setPower(p4);
             // endregion
+
+        }
         }
     }
-}
+
