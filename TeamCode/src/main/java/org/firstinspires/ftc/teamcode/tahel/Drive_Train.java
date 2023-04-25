@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
-public class proj1 extends LinearOpMode {
+public class Drive_Train extends LinearOpMode {
 
     public double[] get_x2_y2 (double angle, double x1, double y1){
         double len = Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2));
@@ -66,7 +66,7 @@ public class proj1 extends LinearOpMode {
         resetRuntime();
 
         while (opModeIsActive()) {
-        }
+
 
         //obtain the current orientation of the robot.
         //AxesReference.INTRINSIC - specifies the coordinate system that the angles should be returned in.
@@ -80,48 +80,42 @@ public class proj1 extends LinearOpMode {
         x2 = x2_y2[0];
         y2 = x2_y2[1];
 
-
-
-
-        // region WAIT FOR START
-        waitForStart();
-        if(isStopRequested()){
-            return;
-        }
-        resetRuntime();
+        // region MOTOR POWER CALCULATION
+        // calculating the motor powers based on the three basic movements (straight, lateral and turn)
+        //            [      straight       ] [       lateral       ] [         turn          ]
+        double p1 =            x2           -           y2          +  gamepad1.right_stick_x;
+        double p2 =  -         x2           -           y2          -  gamepad1.right_stick_x  ;
+        double p3 =            x2           -           y2          -  gamepad1.right_stick_x;
+        double p4 =  -         x2           -           y2          +  gamepad1.right_stick_x;
         // endregion
 
-        while (opModeIsActive()){
-            // region MOTOR POWER CALCULATION
-            // calculating the motor powers based on the three basic movements (straight, lateral and turn)
-            //            [      straight       ] [       lateral       ] [         turn          ]
-            double p1 = -           x2           -           y2          +  gamepad1.left_stick_x;
-            double p2 =             x2           -           y2          -  gamepad1.left_stick_x;
-            double p3 =             x2           -           y2          +  gamepad1.left_stick_x;
-            double p4 = -           x2           -           y2          -  gamepad1.left_stick_x;
-            // endregion
+        // region NORMALIZE MOTOR POWER
 
-            // region NORMALIZE MOTOR POWER
-
-            // finds the highest absolute value of the non normalized motor powers
-            double bigger = MAX(Math.abs(p1), Math.abs(p2),Math.abs(p3), Math.abs(p4));
-            // if the motors aren't capable of the power requirement
-            if(bigger>1){
-                p1 /= bigger;
-                p2 /= bigger;
-                p3 /= bigger;
-                p4 /= bigger;
-            }
-            // endregion
-
-            // region SET MOTOR POWER
-            frontRight.setPower(p1);
-            frontLeft.setPower(p2);
-            backRight.setPower(p3);
-            backLeft.setPower(p4);
-            // endregion
-
+        // finds the highest absolute value of the non normalized motor powers
+        double bigger = MAX(Math.abs(p1), Math.abs(p2),Math.abs(p3), Math.abs(p4));
+        // if the motors aren't capable of the power requirement
+        if(bigger>1){
+            p1 /= bigger;
+            p2 /= bigger;
+            p3 /= bigger;
+            p4 /= bigger;
         }
+        // endregion
+
+        // region SET MOTOR POWER
+        telemetry.addData("p1", p1);
+        telemetry.addData("p2", p2);
+        telemetry.addData("p3", p3);
+        telemetry.addData("p4", p4);
+        telemetry.update();
+        frontRight.setPower(p2);
+        frontLeft.setPower(p1);
+        backRight.setPower(p3);
+        backLeft.setPower(p4);
+        // endregion
+
+
         }
     }
+}
 
