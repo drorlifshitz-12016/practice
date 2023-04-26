@@ -8,13 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class practice extends LinearOpMode {
-
     static Servo grabberRight;
-    static Servo grabberLeft ;
+    static Servo grabberLeft;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         grabberRight = hardwareMap.servo.get("grabberRight");
         grabberLeft = hardwareMap.servo.get("grabberLeft");
 
@@ -32,6 +30,8 @@ public class practice extends LinearOpMode {
         boolean is_high_0 = true;
         boolean triger_left = false;
         boolean last_triger_left;
+        int dpad_num = 0;
+        boolean out = false;
 
         waitForStart();
         if (isStopRequested()) {
@@ -40,49 +40,53 @@ public class practice extends LinearOpMode {
 
         resetRuntime();
         while (opModeIsActive()) {
-
             last_triger_left = triger_left;
             triger_left = (gamepad1.left_trigger > 0.1);
 
             last_dpad = dpad;
             dpad = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
             dpad_click = dpad && !last_dpad;
+            if(dpad_click){
+                dpad_num = dpad_num++;
+            }
+            if(dpad_num % 2 != 0){
+                out = true;
+            }
+
 
 
             if (triger_left) {
                 grabberRight.setPosition(highets[1]);
                 grabberLeft.setPosition(highets[1]);
-            } else if (last_triger_left && !triger_left) {
+            }
+            else if (last_triger_left && !triger_left) {
                 grabberRight.setPosition(highets[0]);
                 grabberLeft. setPosition(highets[0]);
             }
+
             if (dpad_click && is_high_0) {
                 if (gamepad1.dpad_up) {
                     grabberRight.setPosition(highets[5]);
-                    grabberLeft. setPosition(highets[5]);
-
-
-                }else if (gamepad1.dpad_right) {
+                    grabberLeft.setPosition(highets[5]);
+                }
+                else if (gamepad1.dpad_right) {
                     grabberRight.setPosition(highets[4]);
-                    grabberLeft. setPosition(highets[4]);
-
-                }else if (gamepad1.dpad_down) {
+                    grabberLeft.setPosition(highets[4]);
+                }
+                else if (gamepad1.dpad_down) {
                     grabberRight.setPosition(highets[3]);
-                    grabberLeft. setPosition(highets[3]);
-
-
-                }else if (gamepad1.dpad_down) {
+                    grabberLeft.setPosition(highets[3]);
+                }
+                else if (gamepad1.dpad_left) {
                     grabberRight.setPosition(highets[2]);
                     grabberLeft.setPosition(highets[2]);
                 }
+            }
 
-            if (dpad_click && !is_high_0){
+            if (dpad_click && out) {
                 grabberLeft.setPosition(highets[0]);
                 grabberRight.setPosition(highets[0]);
-                }
-
-
-                }
             }
         }
     }
+}
