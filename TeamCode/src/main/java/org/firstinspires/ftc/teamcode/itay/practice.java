@@ -53,8 +53,7 @@ public class practice extends LinearOpMode {
                 out = true;
             }
 
-
-
+//Collecting one cone
             if (triger_left) {
                 grabberRight.setPosition(highets[1]);
                 grabberLeft.setPosition(highets[1]);
@@ -64,6 +63,7 @@ public class practice extends LinearOpMode {
                 grabberLeft. setPosition(highets[0]);
             }
 
+//Collecting cones from the stack
             if (dpad_click && is_high_0) {
                 if (gamepad1.dpad_up) {
                     grabberRight.setPosition(highets[5]);
@@ -82,7 +82,7 @@ public class practice extends LinearOpMode {
                     grabberLeft.setPosition(highets[2]);
                 }
             }
-
+//Return to position 0
             if (dpad_click && out) {
                 grabberLeft.setPosition(highets[0]);
                 grabberRight.setPosition(highets[0]);
