@@ -83,8 +83,6 @@ public class practice extends LinearOpMode {
                 grabberLeft.setPosition(highets[0]);
                 grabberRight.setPosition(highets[0]);
             }
-
-            out = (dpad_num % 2 != 0);
         }
     }
 }
