@@ -26,8 +26,6 @@ public class practice extends LinearOpMode {
         boolean last_dpad;
         boolean dpad = false;
         boolean dpad_click;
-        boolean second_click = false;
-        boolean is_high_0 = true;
         boolean triger_left = false;
         boolean last_triger_left;
         int dpad_num = 0;
@@ -46,11 +44,9 @@ public class practice extends LinearOpMode {
             last_dpad = dpad;
             dpad = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
             dpad_click = dpad && !last_dpad;
+
             if(dpad_click){
                 dpad_num = dpad_num++;
-            }
-            if(dpad_num % 2 != 0){
-                out = true;
             }
 
 //Collecting one cone
@@ -64,7 +60,7 @@ public class practice extends LinearOpMode {
             }
 
 //Collecting cones from the stack
-            if (dpad_click && is_high_0) {
+            if (dpad_click && !out) {
                 if (gamepad1.dpad_up) {
                     grabberRight.setPosition(highets[5]);
                     grabberLeft.setPosition(highets[5]);
@@ -87,6 +83,8 @@ public class practice extends LinearOpMode {
                 grabberLeft.setPosition(highets[0]);
                 grabberRight.setPosition(highets[0]);
             }
+
+            out = (dpad_num % 2 != 0);
         }
     }
 }
