@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -34,6 +35,10 @@ public class Drive_Train extends LinearOpMode {
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor backRight = hardwareMap.dcMotor.get("backRight");
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
+        Servo grabberRight = hardwareMap.servo.get("grabberRight");
+        Servo grabberLeft = hardwareMap.servo.get("grabberLeft");
+        Servo armRight = hardwareMap.servo.get("armRight");
+        Servo armLeft = hardwareMap.servo.get("armLeft");
         // endregion
 
         // region SET MOTOR DIRECTION
@@ -42,8 +47,6 @@ public class Drive_Train extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // endregion
-
-        double alpha;
 
         //imu - A sensor that contains a GYRO sensor, which we use to detect the orientation
         //of the robot at any given moment, and using the information for pitch-based travel
@@ -65,54 +68,99 @@ public class Drive_Train extends LinearOpMode {
         }
         resetRuntime();
 
+        armRight.setPosition(0);
+        armLeft.setPosition(0);
+        grabberRight.setPosition(0);
+        grabberRight.setPosition(0);
+        //0 = close
+        //1 = normal
+        //0.1 = second cone
+        //0.3 = third cone
+        //0.5 = fourth cone
+        //0.75 = fifth cone
+        double[] heights = new double[]{0, 0.1, 0.3, 0.5, 0.75, 1};
+
         while (opModeIsActive()) {
 
+            if (gamepad1.left_trigger > 0) {
+                armRight.setPosition(1);
+                armLeft.setPosition(1);
+                grabberRight.setPosition(heights[5]);
+                grabberLeft.setPosition(heights[5]);
+            } else {
+                if(grabberRight.getPosition() == heights[5]) {
+                    armRight.setPosition(0);
+                    armLeft.setPosition(0);
+                    grabberRight.setPosition(heights[0]);
+                    grabberLeft.setPosition(heights[0]);
+                }
+            }
+            if (gamepad1.dpad_up) {
+                grabberRight.setPosition(heights[4]);
+                grabberLeft.setPosition(heights[4]);
+            }
+            else if (gamepad1.dpad_right) {
+                grabberRight.setPosition(heights[3]);
+                grabberLeft.setPosition(heights[3]);
+            }
+            else if (gamepad1.dpad_down) {
+                grabberRight.setPosition(heights[2]);
+                grabberLeft.setPosition(heights[2]);
+            }
+            else if (gamepad1.dpad_left) {
+                grabberRight.setPosition(heights[1]);
+                grabberLeft.setPosition(heights[1]);
+            }
+            else if (gamepad1.x){
+                grabberRight.setPosition(heights[0]);
+                grabberLeft.setPosition(heights[0]);
+            }
 
-        //obtain the current orientation of the robot.
-        //AxesReference.INTRINSIC - specifies the coordinate system that the angles should be returned in.
-        //AngleUnit.RADIANS specifies that the angles should be returned in radians.
-        double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+            //obtain the current orientation of the robot.
+            //AxesReference.INTRINSIC - specifies the coordinate system that the angles should be returned in.
+            //AngleUnit.RADIANS specifies that the angles should be returned in radians.
+            double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
-        double x1 = gamepad1.left_stick_x;
-        double y1 = gamepad1.left_stick_y;
-        double x2, y2;
-        double[] x2_y2 = get_x2_y2(angle, x1, y1);
-        x2 = x2_y2[0];
-        y2 = x2_y2[1];
+            double x1 = gamepad1.left_stick_x;
+            double y1 = gamepad1.left_stick_y;
+            double x2, y2;
+            double[] x2_y2 = get_x2_y2(angle, x1, y1);
+            x2 = x2_y2[0];
+            y2 = x2_y2[1];
 
-        // region MOTOR POWER CALCULATION
-        // calculating the motor powers based on the three basic movements (straight, lateral and turn)
-        //            [      straight       ] [       lateral       ] [         turn          ]
-        double p1 =            x2           -           y2          +  gamepad1.right_stick_x;
-        double p2 =  -         x2           -           y2          -  gamepad1.right_stick_x  ;
-        double p3 =            x2           -           y2          -  gamepad1.right_stick_x;
-        double p4 =  -         x2           -           y2          +  gamepad1.right_stick_x;
-        // endregion
+            // region MOTOR POWER CALCULATION
+            // calculating the motor powers based on the three basic movements (straight, lateral and turn)
+            //            [      straight       ] [       lateral       ] [         turn          ]
+            double p1 = x2 - y2 + gamepad1.right_stick_x;
+            double p2 = -x2 - y2 - gamepad1.right_stick_x;
+            double p3 = x2 - y2 - gamepad1.right_stick_x;
+            double p4 = -x2 - y2 + gamepad1.right_stick_x;
+            // endregion
 
-        // region NORMALIZE MOTOR POWER
+            // region NORMALIZE MOTOR POWER
 
-        // finds the highest absolute value of the non normalized motor powers
-        double bigger = MAX(Math.abs(p1), Math.abs(p2),Math.abs(p3), Math.abs(p4));
-        // if the motors aren't capable of the power requirement
-        if(bigger>1){
-            p1 /= bigger;
-            p2 /= bigger;
-            p3 /= bigger;
-            p4 /= bigger;
-        }
-        // endregion
+            // finds the highest absolute value of the non normalized motor powers
+            double bigger = MAX(Math.abs(p1), Math.abs(p2), Math.abs(p3), Math.abs(p4));
+            // if the motors aren't capable of the power requirement
+            if (bigger > 1) {
+                p1 /= bigger;
+                p2 /= bigger;
+                p3 /= bigger;
+                p4 /= bigger;
+            }
+            // endregion
 
-        // region SET MOTOR POWER
-        telemetry.addData("p1", p1);
-        telemetry.addData("p2", p2);
-        telemetry.addData("p3", p3);
-        telemetry.addData("p4", p4);
-        telemetry.update();
-        frontRight.setPower(p2);
-        frontLeft.setPower(p1);
-        backRight.setPower(p3);
-        backLeft.setPower(p4);
-        // endregion
+            // region SET MOTOR POWER
+            telemetry.addData("p1", p1);
+            telemetry.addData("p2", p2);
+            telemetry.addData("p3", p3);
+            telemetry.addData("p4", p4);
+            telemetry.update();
+            frontRight.setPower(p2);
+            frontLeft.setPower(p1);
+            backRight.setPower(p3);
+            backLeft.setPower(p4);
+            // endregion
 
 
         }
