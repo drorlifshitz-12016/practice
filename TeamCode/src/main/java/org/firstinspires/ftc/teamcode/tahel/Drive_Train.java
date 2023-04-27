@@ -39,12 +39,19 @@ public class Drive_Train extends LinearOpMode {
         Servo grabberLeft = hardwareMap.servo.get("grabberLeft");
         Servo armRight = hardwareMap.servo.get("armRight");
         Servo armLeft = hardwareMap.servo.get("armLeft");
+        double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
+        boolean upWasPressed    = false;
+        boolean downWasPressed  = false;
+        boolean leftWasPressed  = false;
+        boolean rightWasPressed = false;
         // endregion
 
         // region SET MOTOR DIRECTION
         // reversing the right motors in order to have intuition for their movement direction
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        grabberRight.setDirection(Servo.Direction.REVERSE);
+        armRight.setDirection(Servo.Direction.REVERSE);
 
         // endregion
 
@@ -67,53 +74,89 @@ public class Drive_Train extends LinearOpMode {
             return;
         }
         resetRuntime();
+        armRight.setPosition(1);
+        armLeft.setPosition(1);
+        grabberRight.setPosition(heights[5]);
+        grabberLeft.setPosition(heights[5]);
 
-        armRight.setPosition(0);
-        armLeft.setPosition(0);
-        grabberRight.setPosition(0);
-        grabberRight.setPosition(0);
         //0 = close
         //1 = normal
         //0.1 = second cone
         //0.3 = third cone
         //0.5 = fourth cone
         //0.75 = fifth cone
-        double[] heights = new double[]{0, 0.1, 0.3, 0.5, 0.75, 1};
+        //0.7, 0.055, 0.06, 0.09, 0.13, 0.17
+
 
         while (opModeIsActive()) {
-
             if (gamepad1.left_trigger > 0) {
-                armRight.setPosition(1);
-                armLeft.setPosition(1);
-                grabberRight.setPosition(heights[5]);
-                grabberLeft.setPosition(heights[5]);
-            } else {
-                if(grabberRight.getPosition() == heights[5]) {
-                    armRight.setPosition(0);
-                    armLeft.setPosition(0);
-                    grabberRight.setPosition(heights[0]);
-                    grabberLeft.setPosition(heights[0]);
-                }
-            }
-            if (gamepad1.dpad_up) {
-                grabberRight.setPosition(heights[4]);
-                grabberLeft.setPosition(heights[4]);
-            }
-            else if (gamepad1.dpad_right) {
-                grabberRight.setPosition(heights[3]);
-                grabberLeft.setPosition(heights[3]);
-            }
-            else if (gamepad1.dpad_down) {
-                grabberRight.setPosition(heights[2]);
-                grabberLeft.setPosition(heights[2]);
-            }
-            else if (gamepad1.dpad_left) {
-                grabberRight.setPosition(heights[1]);
-                grabberLeft.setPosition(heights[1]);
-            }
-            else if (gamepad1.x){
+                armRight.setPosition(0);
+                armLeft.setPosition(0);
                 grabberRight.setPosition(heights[0]);
                 grabberLeft.setPosition(heights[0]);
+            } else {
+                if (grabberLeft.getPosition() == heights[0]) {
+                    armRight.setPosition(1);
+                    armLeft.setPosition(1);
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+            }
+            if (gamepad1.dpad_up && !upWasPressed) {
+                upWasPressed = true;
+                if (grabberRight.getPosition() == heights[5]) {
+                    grabberRight.setPosition(heights[4]);
+                    grabberLeft.setPosition(heights[4]);
+                } else {
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+            }
+
+            if (gamepad1.dpad_right && !rightWasPressed) {
+                rightWasPressed  = true;
+                if (grabberRight.getPosition() == heights[5]) {
+                    grabberRight.setPosition(heights[3]);
+                    grabberLeft.setPosition(heights[3]);
+                } else {
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+            }
+
+            if (gamepad1.dpad_down && !downWasPressed) {
+                downWasPressed  = true;
+                if (grabberRight.getPosition() == heights[5]) {
+                    grabberRight.setPosition(heights[2]);
+                    grabberLeft.setPosition(heights[2]);
+                } else {
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+            }
+
+            if (gamepad1.dpad_left && !leftWasPressed) {
+                leftWasPressed  = true;
+                if (grabberRight.getPosition() == heights[5]) {
+                    grabberRight.setPosition(heights[1]);
+                    grabberLeft.setPosition(heights[1]);
+                } else {
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+            }
+
+            if(!gamepad1.dpad_up){
+                upWasPressed = false;
+            }
+            if(!gamepad1.dpad_right){
+                rightWasPressed = false;
+            }
+            if(!gamepad1.dpad_left){
+                leftWasPressed = false;
+            }
+            if(!gamepad1.dpad_down){
+                downWasPressed = false;
             }
 
             //obtain the current orientation of the robot.
