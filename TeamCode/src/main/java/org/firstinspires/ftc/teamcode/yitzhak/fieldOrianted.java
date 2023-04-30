@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.yitzhak;
 
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
 public class fieldOrianted extends LinearOpMode {
@@ -14,17 +19,19 @@ public class fieldOrianted extends LinearOpMode {
         DcMotor frontLeft  = hardwareMap.dcMotor.get("frontLeft" );
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
+        BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         waitForStart();
-        if(isStopRequested()){
-            return;
-        }
+        if(isStopRequested()){ return; }
         resetRuntime();
+        
         double L
         double t;
         double x1;
@@ -34,6 +41,7 @@ public class fieldOrianted extends LinearOpMode {
         double a;
         double b = 0;
 
+        double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
         while (opModeIsActive()){
             y1 = -gamepad1.left_stick_y;
@@ -45,10 +53,10 @@ public class fieldOrianted extends LinearOpMode {
            x2 = L * (Math.cos(a + b));
 
             // region SECOND PART
-            double fR = (y-x-t);
-            double fL = (y+x+t);
-            double bR = (y+x-t);
-            double bL = (y-x+t);
+            double fR = (y1-x1-t);
+            double fL = (y1+x1+t);
+            double bR = (y1+x1-t);
+            double bL = (y1-x1+t);
 
             double max1 = Math.max(fR , fL);
             double max2 = Math.max(bR , bL);
