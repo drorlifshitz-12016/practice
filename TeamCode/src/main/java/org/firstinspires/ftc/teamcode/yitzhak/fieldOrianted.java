@@ -22,14 +22,14 @@ public class fieldOrianted extends LinearOpMode {
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         //endregion
 
-        //region Initializing the imu
+        //region INITIALIZING THE imu
         BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         //endregion
 
-        //region Reversing Left motors
+        //region REVERSING LEFT MOTORS
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
         //endregion
@@ -37,9 +37,9 @@ public class fieldOrianted extends LinearOpMode {
         if(isStopRequested()){ return; }
         resetRuntime();
 
-        //region seting
+        //region SETTING VARIABLES
         double L, t, x1, y1, x2, y2, a, b;
-
+        //endregion
         while (opModeIsActive()){
             // region UPDATING THE INPUT
             b  = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
@@ -55,7 +55,7 @@ public class fieldOrianted extends LinearOpMode {
             x2 = L * Math.cos(a + b);
             // endregion
 
-            // region SECOND PART
+            // region NORMALIZING THE POWER
             double fR = y2 - x2 - t;
             double fL = y2 + x2 + t;
             double bR = y2 + x2 - t;
@@ -71,6 +71,9 @@ public class fieldOrianted extends LinearOpMode {
                 bR /= maxF;
                 bL /= maxF;
             }
+            // endregion
+
+            //region SETTING POWER
             frontRight.setPower(fR);
             frontLeft .setPower(fL);
             backRight .setPower(bR);
