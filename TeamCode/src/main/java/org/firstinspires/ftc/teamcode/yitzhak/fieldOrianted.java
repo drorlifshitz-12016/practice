@@ -15,23 +15,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public class fieldOrianted extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        //region Getting the DcMotors from hardwereMap
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor frontLeft  = hardwareMap.dcMotor.get("frontLeft" );
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
-        BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
+        //endregion
 
+        //region Initializing the imu
+        BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
+        //endregion
 
+        //region Reversing Left motors
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
-
+        //endregion
         waitForStart();
         if(isStopRequested()){ return; }
         resetRuntime();
-        
+
+        //region seting
         double L, t, x1, y1, x2, y2, a, b;
 
         while (opModeIsActive()){
