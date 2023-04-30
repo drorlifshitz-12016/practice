@@ -43,7 +43,7 @@ public class ExtendArm extends LinearOpMode {
         }
     }
 
-    private static void extendArm(double position){
+    static void extendArm(double position){
         armLeft .setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
         armRight.setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
     }

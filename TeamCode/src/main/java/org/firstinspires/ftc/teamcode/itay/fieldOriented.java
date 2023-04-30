@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.itay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,7 +23,6 @@ public class fieldOriented extends LinearOpMode {
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         // endregion
-
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -66,10 +66,10 @@ public class fieldOriented extends LinearOpMode {
                 // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
                 //                      [      straight       ] [       lateral       ] [         turn         ]
-                double frontRightPower =          y2           +          x2           + gamepad1.right_stick_x;
-                double frontLeftPower  =          y2           -          x2           - gamepad1.right_stick_x;
-                double backRightPower  =          y2           -          x2           + gamepad1.right_stick_x;
-                double backLeftPower   =          y2           +          x2           - gamepad1.right_stick_x;
+                double frontRightPower =          -y2           +          x2           + gamepad1.right_stick_x;
+                double frontLeftPower  =          -y2           -          x2           - gamepad1.right_stick_x;
+                double backRightPower  =          -y2           -          x2           + gamepad1.right_stick_x;
+                double backLeftPower   =          -y2           +          x2           - gamepad1.right_stick_x;
                 // endregion
 
                 // region NORMALIZE MOTOR POWER

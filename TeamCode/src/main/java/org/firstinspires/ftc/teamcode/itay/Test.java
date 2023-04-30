@@ -86,31 +86,3 @@ public class Test extends LinearOpMode {
 
 
 
-//if (dpad_click){
-  //      second_click = true;
-    //    if (gamepad1.dpad_up){
-      //  grabberRight.setPosition(highets[5]);
-        //grabberLeft.setPosition(highets[5]);
-        //}
-    //    else if (gamepad1.dpad_right){
-      //  grabberRight.setPosition(highets[4]);
-        //grabberLeft.setPosition(highets[4]);
-      //  }
-        //else if (gamepad1.dpad_down) {
- //       grabberRight.setPosition(highets[3]);
-   //     grabberLeft.setPosition(highets[3]);
-     //   }
-       // else if (gamepad1.dpad_left){
-        //grabberRight.setPosition(highets[2]);
-        //grabberLeft.setPosition(highets[2]);
-      //  }
-    //    }
-  //      if (dpad_click && second_click){
-//        grabberRight.setPosition(highets[0]);
-        //grabberLeft.setPosition(highets[0]);
-      //  }
-    //    }
-  //      }
-//        }
-
-
