@@ -44,10 +44,12 @@ public class Drive_Train extends LinearOpMode {
         Servo armRight     = hardwareMap.servo.  get("armRight");
         Servo armLeft      = hardwareMap.servo.  get("armLeft");
         double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
+        double supposedToBe = heights[5];
         boolean upWasPressed    = false;
         boolean downWasPressed  = false;
         boolean leftWasPressed  = false;
         boolean rightWasPressed = false;
+
         // endregion
 
         // region SET MOTOR DIRECTION
@@ -88,6 +90,8 @@ public class Drive_Train extends LinearOpMode {
 
         while (opModeIsActive()) {
             //Opens and closes the arm by pressing the trigger
+            telemetry.addData("position" , supposedToBe);
+            telemetry.update();
             if (gamepad1.left_trigger > 0) {
                 armRight.setPosition(0);
                 armLeft.setPosition(0);
@@ -103,38 +107,45 @@ public class Drive_Train extends LinearOpMode {
             }
             //Opens and closes the arm by pressing the dpad_up
             // to the desired height that is defined in the list of heights
+            //double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
             if (gamepad1.dpad_up && !upWasPressed) {
                 upWasPressed = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[3] || supposedToBe == heights[2] || supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[4]);
                     grabberLeft.setPosition(heights[4]);
-                } else {
+                    supposedToBe = heights[4];
+                } else if(supposedToBe == heights[4]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
             //Opens and closes the arm by pressing the dpad_right
             // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_right && !rightWasPressed) {
                 rightWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[2] || supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[3]);
                     grabberLeft.setPosition(heights[3]);
-                } else {
+                    supposedToBe = heights[3];
+                } else if(supposedToBe == heights[3]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
             //Opens and closes the arm by pressing the dpad_down
             // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_down && !downWasPressed) {
                 downWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[3]|| supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[2]);
                     grabberLeft.setPosition(heights[2]);
-                } else {
+                    supposedToBe = heights[2];
+                } else if(supposedToBe == heights[2]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
 
@@ -142,12 +153,14 @@ public class Drive_Train extends LinearOpMode {
             // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_left && !leftWasPressed) {
                 leftWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[3] || supposedToBe == heights[2]) {
                     grabberRight.setPosition(heights[1]);
                     grabberLeft.setPosition(heights[1]);
-                } else {
+                    supposedToBe = heights[1];
+                } else if(supposedToBe == heights[1]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
 
