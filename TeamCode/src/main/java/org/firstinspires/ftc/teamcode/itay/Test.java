@@ -19,6 +19,8 @@ public class Test extends LinearOpMode {
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
         grabbers(heights[0]);
+
+
         // endregion
 
         // region dpad state keeping variables
@@ -41,38 +43,55 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // region update the trigger variables
-            previous_trigger = trigger_left;
-            trigger_left = gamepad1.left_trigger > 0.8;
-            is_trigger_released = !trigger_left && previous_trigger;
-            // endregion
 
-            // region update the dpad variables
-            previous_dpad = dpad;
-            dpad = gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left;
-            dpad_click = !previous_dpad && dpad;
-            // endregion
-
-            if (dpad_click) { is_in = !is_in; }
-
-            if (gamepad1.left_trigger > 0.08) {
-                grabbers(heights[1]);
-                is_in = false;
-            } else if (is_trigger_released) {
-                grabbers(heights[0]);
-                is_in = true;
-            } else {
-                if (dpad_click) {
-                    if (is_in) {
-                        if      (gamepad1.dpad_up   ) { grabbers(heights[5]); }
-                        else if (gamepad1.dpad_right) { grabbers(heights[4]); }
-                        else if (gamepad1.dpad_down ) { grabbers(heights[3]); }
-                        else if (gamepad1.dpad_left ) { grabbers(heights[2]); }
-                    } else {
-                        grabbers(heights[0]);
-                    }
-                }
-            }
+   //         if(gamepad1.a){
+    //            grabbers(0.65);
+  //              sleep(1000);
+  //              grabbers(0.6);
+  //              sleep(1000);
+  //              grabbers(0.55);
+  //              sleep(1000);
+  //              grabbers(0.5);
+  //              sleep(1000);
+  //              grabbers(0.45);
+  //              sleep(1000);
+  //              grabbers(0.4);
+  //              sleep(1000);
+ //               grabbers(0.35);
+ //           }
+//
+//            // region update the trigger variables
+//            previous_trigger = trigger_left;
+//            trigger_left = gamepad1.left_trigger > 0.8;
+//            is_trigger_released = !trigger_left && previous_trigger;
+//            // endregion
+//
+//            // region update the dpad variables
+//            previous_dpad = dpad;
+//            dpad = gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left;
+//            dpad_click = !previous_dpad && dpad;
+//            // endregion
+//
+//            if (dpad_click) { is_in = !is_in; }
+//
+//            if (gamepad1.left_trigger > 0.08) {
+//                grabbers(heights[1]);
+//                is_in = false;
+//            } else if (is_trigger_released) {
+//                grabbers(heights[0]);
+//                is_in = true;
+//            } else {
+//                if (dpad_click) {
+//                    if (is_in) {
+//                        if      (gamepad1.dpad_up   ) { grabbers(heights[5]); }
+//                        else if (gamepad1.dpad_right) { grabbers(heights[4]); }
+//                        else if (gamepad1.dpad_down ) { grabbers(heights[3]); }
+//                        else if (gamepad1.dpad_left ) { grabbers(heights[2]); }
+//                    } else {
+//                        grabbers(heights[0]);
+//                    }
+//                }
+//            }
         }
     }
 
