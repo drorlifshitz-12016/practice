@@ -58,6 +58,7 @@ public class Drive_Train extends LinearOpMode {
         DistanceSensor ds = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
         // endregion
 
+
         // region SET MOTOR DIRECTION
         // reversing the right motors in order to have intuition for their movement direction
         frontLeft.setDirection   (DcMotorSimple.Direction.REVERSE);
@@ -81,10 +82,10 @@ public class Drive_Train extends LinearOpMode {
         imu.initialize(parameters);
 
         //Keeps the arm closed
-//        armRight.setPosition(1);
-//        armLeft.setPosition(1);
-//        grabberRight.setPosition(heights[5]);
-//        grabberLeft.setPosition(heights[5]);
+        armRight.setPosition(1);
+        armLeft.setPosition(1);
+        grabberRight.setPosition(heights[5]);
+        grabberLeft.setPosition(heights[5]);
         grabber.setPosition(release);
 
         waitForStart();
@@ -98,9 +99,6 @@ public class Drive_Train extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if(ds.getDistance(DistanceUnit.MM) < 30){
-                grabber.setPosition(grab);
-            }
 
             //Opens and closes the arm by pressing the trigger
             telemetry.addData("position" , supposedToBe);
@@ -215,6 +213,20 @@ public class Drive_Train extends LinearOpMode {
 
             // region NORMALIZE MOTOR POWER
 
+            if(ds.getDistance(DistanceUnit.CM) < 8){
+                grabber.setPosition(grab);
+                if (grabber.getPosition() == grab) {
+                    armRight.setPosition(1);
+                    armLeft.setPosition(1);
+                    grabberRight.setPosition(heights[5]);
+                    grabberLeft.setPosition(heights[5]);
+                }
+
+            }
+            if(ds.getDistance(DistanceUnit.CM) > 8) {
+                grabber.setPosition(release);
+            }
+
             // finds the highest absolute value of the non normalized motor powers
             double bigger = MAX(Math.abs(p1), Math.abs(p2), Math.abs(p3), Math.abs(p4));
             // if the motors aren't capable of the power requirement
@@ -232,7 +244,7 @@ public class Drive_Train extends LinearOpMode {
             telemetry.addData("p2", p2);
             telemetry.addData("p3", p3);
             telemetry.addData("p4", p4);
-            telemetry.addData("sensor" ,ds);
+            telemetry.addData("sensor" ,ds.getDistance(DistanceUnit.CM));
             telemetry.update();
 
             frontRight.setPower(p2);
