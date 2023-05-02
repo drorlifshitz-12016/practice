@@ -14,14 +14,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @TeleOp
 public class Drive_Train extends LinearOpMode {
 
+        //A function that receives the angle from the imu sensor
+        // and the x and y reached by the joystick and outputs the new x and y.
     public double[] get_x2_y2 (double angle, double x1, double y1){
-        double len = Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2));
+        double len  = Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2));
         double alfa = Math.atan2(y1, x1);
-        double x2 = len * Math.cos(alfa + angle);
-        double y2 = len * Math.sin(alfa + angle);
+        double x2   = len * Math.cos(alfa + angle);
+        double y2   = len * Math.sin(alfa + angle);
         return new double[]{x2, y2};
     }
 
+        //A function that accepts four values and returns the highest value
     public double MAX(double n1, double n2, double n3, double n4){
         double bigger1 = Math.max(n1, n2);
         double bigger2 = Math.max(n3, n4);
@@ -29,29 +32,32 @@ public class Drive_Train extends LinearOpMode {
         return max_num;
     }
     @Override
+
     public void runOpMode() throws InterruptedException {
-        // region GET DRIVETRAIN MOTORS
+        // region GET DRIVETRAIN MOTORS, SERVO and Setting Variables
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
-        DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        DcMotor backRight = hardwareMap.dcMotor.get("backRight");
-        DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
-        Servo grabberRight = hardwareMap.servo.get("grabberRight");
-        Servo grabberLeft = hardwareMap.servo.get("grabberLeft");
-        Servo armRight = hardwareMap.servo.get("armRight");
-        Servo armLeft = hardwareMap.servo.get("armLeft");
+        DcMotor frontLeft  = hardwareMap.dcMotor.get("frontLeft");
+        DcMotor backRight  = hardwareMap.dcMotor.get("backRight");
+        DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft");
+        Servo grabberRight = hardwareMap.servo.  get("grabberRight");
+        Servo grabberLeft  = hardwareMap.servo.  get("grabberLeft");
+        Servo armRight     = hardwareMap.servo.  get("armRight");
+        Servo armLeft      = hardwareMap.servo.  get("armLeft");
         double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
+        double supposedToBe = heights[5];
         boolean upWasPressed    = false;
         boolean downWasPressed  = false;
         boolean leftWasPressed  = false;
         boolean rightWasPressed = false;
+
         // endregion
 
         // region SET MOTOR DIRECTION
         // reversing the right motors in order to have intuition for their movement direction
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection   (DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection    (DcMotorSimple.Direction.REVERSE);
         grabberRight.setDirection(Servo.Direction.REVERSE);
-        armRight.setDirection(Servo.Direction.REVERSE);
+        armRight.setDirection    (Servo.Direction.REVERSE);
 
         // endregion
 
@@ -74,21 +80,18 @@ public class Drive_Train extends LinearOpMode {
             return;
         }
         resetRuntime();
+
+        //Keeps the arm closed
         armRight.setPosition(1);
         armLeft.setPosition(1);
         grabberRight.setPosition(heights[5]);
         grabberLeft.setPosition(heights[5]);
 
-        //0 = close
-        //1 = normal
-        //0.1 = second cone
-        //0.3 = third cone
-        //0.5 = fourth cone
-        //0.75 = fifth cone
-        //0.7, 0.055, 0.06, 0.09, 0.13, 0.17
-
 
         while (opModeIsActive()) {
+            //Opens and closes the arm by pressing the trigger
+            telemetry.addData("position" , supposedToBe);
+            telemetry.update();
             if (gamepad1.left_trigger > 0) {
                 armRight.setPosition(0);
                 armLeft.setPosition(0);
@@ -102,61 +105,78 @@ public class Drive_Train extends LinearOpMode {
                     grabberLeft.setPosition(heights[5]);
                 }
             }
+            //Opens and closes the arm by pressing the dpad_up
+            // to the desired height that is defined in the list of heights
+            //double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
             if (gamepad1.dpad_up && !upWasPressed) {
                 upWasPressed = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[3] || supposedToBe == heights[2] || supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[4]);
                     grabberLeft.setPosition(heights[4]);
-                } else {
+                    supposedToBe = heights[4];
+                } else if(supposedToBe == heights[4]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
-
+            //Opens and closes the arm by pressing the dpad_right
+            // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_right && !rightWasPressed) {
                 rightWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[2] || supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[3]);
                     grabberLeft.setPosition(heights[3]);
-                } else {
+                    supposedToBe = heights[3];
+                } else if(supposedToBe == heights[3]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
-
+            //Opens and closes the arm by pressing the dpad_down
+            // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_down && !downWasPressed) {
                 downWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[3]|| supposedToBe == heights[1]) {
                     grabberRight.setPosition(heights[2]);
                     grabberLeft.setPosition(heights[2]);
-                } else {
+                    supposedToBe = heights[2];
+                } else if(supposedToBe == heights[2]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
 
+            //Opens and closes the arm by pressing the dpad_left
+            // to the desired height that is defined in the list of heights
             if (gamepad1.dpad_left && !leftWasPressed) {
                 leftWasPressed  = true;
-                if (grabberRight.getPosition() == heights[5]) {
+                if (supposedToBe == heights[5] || supposedToBe == heights[4] || supposedToBe == heights[3] || supposedToBe == heights[2]) {
                     grabberRight.setPosition(heights[1]);
                     grabberLeft.setPosition(heights[1]);
-                } else {
+                    supposedToBe = heights[1];
+                } else if(supposedToBe == heights[1]){
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    supposedToBe = heights[5];
                 }
             }
 
+            //If the dpad was pressed the boolean variable changes to false
+            // so that the dpad closes on the next press
             if(!gamepad1.dpad_up){
-                upWasPressed = false;
+                upWasPressed    = false;
             }
             if(!gamepad1.dpad_right){
                 rightWasPressed = false;
             }
             if(!gamepad1.dpad_left){
-                leftWasPressed = false;
+                leftWasPressed  = false;
             }
             if(!gamepad1.dpad_down){
-                downWasPressed = false;
+                downWasPressed  = false;
             }
 
             //obtain the current orientation of the robot.
@@ -174,10 +194,10 @@ public class Drive_Train extends LinearOpMode {
             // region MOTOR POWER CALCULATION
             // calculating the motor powers based on the three basic movements (straight, lateral and turn)
             //            [      straight       ] [       lateral       ] [         turn          ]
-            double p1 = x2 - y2 + gamepad1.right_stick_x;
-            double p2 = -x2 - y2 - gamepad1.right_stick_x;
-            double p3 = x2 - y2 - gamepad1.right_stick_x;
-            double p4 = -x2 - y2 + gamepad1.right_stick_x;
+            double p1 =             x2           -          y2           +  gamepad1.right_stick_x;
+            double p2 = -           x2           -          y2           -  gamepad1.right_stick_x;
+            double p3 =             x2           -          y2           -  gamepad1.right_stick_x;
+            double p4 = -           x2           -          y2           +  gamepad1.right_stick_x;
             // endregion
 
             // region NORMALIZE MOTOR POWER
@@ -200,9 +220,9 @@ public class Drive_Train extends LinearOpMode {
             telemetry.addData("p4", p4);
             telemetry.update();
             frontRight.setPower(p2);
-            frontLeft.setPower(p1);
-            backRight.setPower(p3);
-            backLeft.setPower(p4);
+            frontLeft.setPower (p1);
+            backRight.setPower (p3);
+            backLeft.setPower  (p4);
             // endregion
 
 
