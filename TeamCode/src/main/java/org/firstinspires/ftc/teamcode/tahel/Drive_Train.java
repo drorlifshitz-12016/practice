@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class Drive_Train extends LinearOpMode {
@@ -43,13 +45,17 @@ public class Drive_Train extends LinearOpMode {
         Servo grabberLeft  = hardwareMap.servo.  get("grabberLeft");
         Servo armRight     = hardwareMap.servo.  get("armRight");
         Servo armLeft      = hardwareMap.servo.  get("armLeft");
-        double[] heights = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
-        double supposedToBe = heights[5];
+        Servo grabber = hardwareMap.servo.get("grabber");
+        double[] heights   = new double[]{0.055, 0.06, 0.09, 0.13, 0.17, 0.7};
+        double[] grabberPosition = new double[]{0.36 , 0.18};
+        double grab = grabberPosition[0];
+        double release = grabberPosition[1];
+        double  supposedToBe    = heights[5];
         boolean upWasPressed    = false;
         boolean downWasPressed  = false;
         boolean leftWasPressed  = false;
         boolean rightWasPressed = false;
-
+        DistanceSensor ds = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
         // endregion
 
         // region SET MOTOR DIRECTION
@@ -58,7 +64,6 @@ public class Drive_Train extends LinearOpMode {
         backLeft.setDirection    (DcMotorSimple.Direction.REVERSE);
         grabberRight.setDirection(Servo.Direction.REVERSE);
         armRight.setDirection    (Servo.Direction.REVERSE);
-
         // endregion
 
         //imu - A sensor that contains a GYRO sensor, which we use to detect the orientation
@@ -75,20 +80,28 @@ public class Drive_Train extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+        //Keeps the arm closed
+//        armRight.setPosition(1);
+//        armLeft.setPosition(1);
+//        grabberRight.setPosition(heights[5]);
+//        grabberLeft.setPosition(heights[5]);
+        grabber.setPosition(release);
+
         waitForStart();
         if (isStopRequested()) {
             return;
         }
         resetRuntime();
 
-        //Keeps the arm closed
-        armRight.setPosition(1);
-        armLeft.setPosition(1);
-        grabberRight.setPosition(heights[5]);
-        grabberLeft.setPosition(heights[5]);
+
 
 
         while (opModeIsActive()) {
+
+            if(ds.getDistance(DistanceUnit.MM) < 30){
+                grabber.setPosition(grab);
+            }
+
             //Opens and closes the arm by pressing the trigger
             telemetry.addData("position" , supposedToBe);
             telemetry.update();
@@ -213,12 +226,15 @@ public class Drive_Train extends LinearOpMode {
             }
             // endregion
 
+
             // region SET MOTOR POWER
             telemetry.addData("p1", p1);
             telemetry.addData("p2", p2);
             telemetry.addData("p3", p3);
             telemetry.addData("p4", p4);
+            telemetry.addData("sensor" ,ds);
             telemetry.update();
+
             frontRight.setPower(p2);
             frontLeft.setPower (p1);
             backRight.setPower (p3);
