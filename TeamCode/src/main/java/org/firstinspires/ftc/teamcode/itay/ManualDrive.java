@@ -7,11 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class ManualDrive extends LinearOpMode {
@@ -36,6 +38,8 @@ public class ManualDrive extends LinearOpMode {
     static Servo grabberRight;
     static Servo grabberLeft;
 
+    static Servo grabber;
+
     static void extendArm(double position){
         armLeft .setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
         armRight.setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
@@ -47,6 +51,8 @@ public class ManualDrive extends LinearOpMode {
         grabberRight = hardwareMap.servo.get("grabberRight");
         grabberLeft  = hardwareMap.servo.get("grabberLeft" );
 
+        DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
+        grabber = hardwareMap.servo.get("grabber");
 
         // region GET DRIVETRAIN MOTORS
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -89,11 +95,12 @@ public class ManualDrive extends LinearOpMode {
         // set the right servo to be reverse
         armRight.setDirection(Servo.Direction.REVERSE);
 
-        // set the servos to be in
-        extendArm(0);
-        // endregion
+
 
         final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
+
+        final double grabPosition = 0.40;
+        final double releasePosition = 0.18;
 
         boolean dpad;
         boolean lastest_dpad = false;
@@ -102,7 +109,13 @@ public class ManualDrive extends LinearOpMode {
         boolean trigger;
         boolean lastest_trigger = false;
 
+        // set the servos to be in
+        extendArm(0);
+        // endregion
+
         setPosition(heights[0]);
+
+        grabber.setPosition(releasePosition);
 
         // region WAIT FOR START
         waitForStart();
@@ -111,7 +124,6 @@ public class ManualDrive extends LinearOpMode {
         }
         resetRuntime();
         // endregion
-
 
 
 
@@ -188,7 +200,11 @@ public class ManualDrive extends LinearOpMode {
             } else if (!is_in) {
                 setPosition(heights[0]);
             }
-
+        if(!is_in){
+            if (grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 120) {
+                grabber.setPosition(grabPosition);
+            }
+        }
 
         }
     }

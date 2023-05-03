@@ -17,12 +17,13 @@ public class grabber extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
-        Servo grabber = hardwareMap.servo.get("grabber");
 
         grabber = hardwareMap.servo.get("grabber");
 
          final double grabPosition = 0.40;
          final double releasePosition = 0.18;
+
+        grabber.setPosition(releasePosition);
 
         waitForStart();
         if (isStopRequested()) {return;}
@@ -32,9 +33,10 @@ public class grabber extends LinearOpMode {
 
         while (opModeIsActive()){
 
+        if(gamepad1.left_trigger > 0.07){
             if (grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 120) {
                 grabber.setPosition(grabPosition);
-            }
+            }}
 
 
         }
