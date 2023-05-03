@@ -33,10 +33,7 @@ public class grabber extends LinearOpMode {
 
         while (opModeIsActive()){
 
-        if(gamepad1.left_trigger > 0.07){
-            if (grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 120) {
-                grabber.setPosition(grabPosition);
-            }}
+
 
 
         }

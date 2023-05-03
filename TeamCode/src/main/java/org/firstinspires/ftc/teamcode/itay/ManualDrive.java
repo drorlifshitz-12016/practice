@@ -174,10 +174,10 @@ public class ManualDrive extends LinearOpMode {
             backLeft  .setPower(backLeftPower  );
             // endregion
 
-
             // region give power for opening intake
             extendArm(gamepad1.left_trigger);
             // endregion
+
 
             dpad = lastest_dpad;
             lastest_dpad = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
@@ -200,11 +200,8 @@ public class ManualDrive extends LinearOpMode {
             } else if (!is_in) {
                 setPosition(heights[0]);
             }
-        if(!is_in){
-            if (grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 120) {
-                grabber.setPosition(grabPosition);
-            }
-        }
+
+
 
         }
     }

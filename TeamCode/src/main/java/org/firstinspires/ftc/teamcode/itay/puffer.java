@@ -10,11 +10,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class puffer extends LinearOpMode {
 
+    static Servo pufferServo;
+     static Servo rightServo ;
+     static Servo leftServo  ;
+
+    double inPosition  = 0.16;
+    double midPosition = 0.5 ;
+    double outPosition = 0.95;
+
+    double autonomousOutPosition = 0.88;
+    double grabPosition    = 0.3;
+    double releasePosition = 0.2;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
-        Servo grabber = hardwareMap.servo.get("grabber");
+        pufferServo = hardwareMap.servo.get("puffer");
+        rightServo  = hardwareMap.servo.get("pufferRight");
+        leftServo   = hardwareMap.servo.get("pufferLeft" );
 
         waitForStart();
         if (isStopRequested()) { return; }
@@ -23,9 +36,12 @@ public class puffer extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            telemetry.addData("distance", grabberDistanceToConeSensor.getDistance(DistanceUnit.MM));
-            telemetry.update();
-
+        if (gamepad1.a){
+            pufferServo.setPosition(grabPosition);
+        }
+        if (gamepad1.b){
+            pufferServo.setPosition(releasePosition);
+        }
 
         }
     }
