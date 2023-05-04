@@ -20,11 +20,6 @@ public class fieldOrianted extends LinearOpMode {
         DcMotor frontLeft  = hardwareMap.dcMotor.get("frontLeft" );
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
-        BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
         //endregion
 
         //region INITIALIZING THE imu
@@ -67,11 +62,6 @@ public class fieldOrianted extends LinearOpMode {
             x2 = L * Math.cos(a + b);
             // endregion
 
-            // region SECOND PART
-            double fR = (y1-x1-t);
-            double fL = (y1+x1+t);
-            double bR = (y1+x1-t);
-            double bL = (y1-x1+t);
             // region NORMALIZING THE POWER
             double fR = y2 - x2 - t;
             double fL = y2 + x2 + t;
@@ -81,8 +71,8 @@ public class fieldOrianted extends LinearOpMode {
             double max1 = Math.max(Math.abs(fR) , Math.abs(fL));
             double max2 = Math.max(Math.abs(bR) , Math.abs(bL));
             double maxF = Math.max(max2 , max1);
-            if(maxF>1) {
 
+            if(maxF>1) {
                 fR /= maxF;
                 fL /= maxF;
                 bR /= maxF;
