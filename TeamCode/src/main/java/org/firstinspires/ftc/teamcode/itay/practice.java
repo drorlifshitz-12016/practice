@@ -27,8 +27,9 @@ public class practice extends LinearOpMode {
     }
     static Servo grabberRight;
     static Servo grabberLeft;
-
     static Servo grabber;
+    private static Servo rightServo ;
+    private static Servo leftServo  ;
 
     @Override
     public void runOpMode(){
@@ -40,9 +41,15 @@ public class practice extends LinearOpMode {
 
         grabber = hardwareMap.servo.get("grabber");
 
+
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
+        rightServo.setDirection(Servo.Direction.REVERSE);
+
+        double inPosition  = 0.16;
+
         final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
+
 
         final double grabPosition = 0.40;
         final double releasePosition = 0.18;
@@ -55,6 +62,9 @@ public class practice extends LinearOpMode {
         boolean lastest_trigger = false;
 
         setPosition(heights[0]);
+
+        rightServo.setPosition(inPosition);
+        leftServo.setPosition(inPosition);
 
         // region WAIT FOR START
         waitForStart();
@@ -88,12 +98,6 @@ public class practice extends LinearOpMode {
                 setPosition(heights[0]);
             }
 
-            if((grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 120)){
-                grabber.setPosition(grabPosition);
-                setPosition(heights[0]);
-            }else{
-                grabber.setPosition(releasePosition);
-            }
 
 
         }

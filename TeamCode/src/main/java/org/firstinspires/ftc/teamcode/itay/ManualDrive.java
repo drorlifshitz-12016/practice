@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -39,6 +40,10 @@ public class ManualDrive extends LinearOpMode {
     static Servo grabberLeft;
 
     static Servo grabber;
+    static DigitalChannel isOutSensor;
+
+    static Servo rightServo;
+    static Servo leftServo ;
 
     static void extendArm(double position){
         armLeft .setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
@@ -51,6 +56,7 @@ public class ManualDrive extends LinearOpMode {
         grabberRight = hardwareMap.servo.get("grabberRight");
         grabberLeft  = hardwareMap.servo.get("grabberLeft" );
 
+        isOutSensor = hardwareMap.get(DigitalChannel.class, "grabberIsOutSensor");
         DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
         grabber = hardwareMap.servo.get("grabber");
 
@@ -60,6 +66,10 @@ public class ManualDrive extends LinearOpMode {
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         // endregion
+
+        rightServo  = hardwareMap.servo.get("pufferRight");
+        leftServo   = hardwareMap.servo.get("pufferLeft" );
+
 
         // region INITIALIZE THE IMU
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -76,6 +86,8 @@ public class ManualDrive extends LinearOpMode {
         // endregion
 
         grabberRight.setDirection(Servo.Direction.REVERSE);
+
+        rightServo.setDirection(Servo.Direction.REVERSE);
 
         // region CREATE VARIABLES FOR DRIVE TRAIN
         double x1;
@@ -95,7 +107,7 @@ public class ManualDrive extends LinearOpMode {
         // set the right servo to be reverse
         armRight.setDirection(Servo.Direction.REVERSE);
 
-
+        double puff_is_in  = 0.16;
 
         final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
 
@@ -109,6 +121,10 @@ public class ManualDrive extends LinearOpMode {
         boolean trigger;
         boolean lastest_trigger = false;
 
+        boolean grabb_is_in;
+
+        double first_time;
+
         // set the servos to be in
         extendArm(0);
         // endregion
@@ -116,6 +132,9 @@ public class ManualDrive extends LinearOpMode {
         setPosition(heights[0]);
 
         grabber.setPosition(releasePosition);
+
+        rightServo.setPosition(puff_is_in);
+        leftServo. setPosition(puff_is_in);
 
         // region WAIT FOR START
         waitForStart();
@@ -178,6 +197,7 @@ public class ManualDrive extends LinearOpMode {
             extendArm(gamepad1.left_trigger);
             // endregion
 
+            grabb_is_in = !isOutSensor.getState();
 
             dpad = lastest_dpad;
             lastest_dpad = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
@@ -190,18 +210,32 @@ public class ManualDrive extends LinearOpMode {
 
             if (lastest_trigger) {
                 setPosition(heights[1]);
-            } else if(trigger) {
+            }
+            else if(trigger) {
                 setPosition(heights[0]);
-            } else if (dpad_click){
-                if      (gamepad1.dpad_up   ) { setPosition(heights[5]); }
-                else if (gamepad1.dpad_right) { setPosition(heights[4]); }
-                else if (gamepad1.dpad_down ) { setPosition(heights[3]); }
-                else if (gamepad1.dpad_left ) { setPosition(heights[2]); }
+            }
+            else if (dpad_click){
+                if (gamepad1.dpad_up   ) {
+                    setPosition(heights[5]);
+                }
+                else if (gamepad1.dpad_right) {
+                    setPosition(heights[4]);
+                }
+                else if (gamepad1.dpad_down ) {
+                    setPosition(heights[3]);
+                }
+                else if (gamepad1.dpad_left ) {
+                    setPosition(heights[2]);
+                }
+                first_time = getRuntime();
+                if((first_time + 0.5) > getRuntime()){
+                    if(grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 50){
+                        grabber.setPosition(grabPosition);
+                    }
+                }
             } else if (!is_in) {
                 setPosition(heights[0]);
             }
-
-
 
         }
     }

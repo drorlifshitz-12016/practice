@@ -14,11 +14,10 @@ public class puffer extends LinearOpMode {
      static Servo rightServo ;
      static Servo leftServo  ;
 
-    double inPosition  = 0.16;
-    double midPosition = 0.5 ;
-    double outPosition = 0.95;
+    double s_inPosition  = 0.16;
+    double s_midPosition = 0.5 ;
+    double s_outPosition = 0.95;
 
-    double autonomousOutPosition = 0.88;
     double grabPosition    = 0.3;
     double releasePosition = 0.2;
 
@@ -28,6 +27,8 @@ public class puffer extends LinearOpMode {
         pufferServo = hardwareMap.servo.get("puffer");
         rightServo  = hardwareMap.servo.get("pufferRight");
         leftServo   = hardwareMap.servo.get("pufferLeft" );
+
+        rightServo.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
         if (isStopRequested()) { return; }
