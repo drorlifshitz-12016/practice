@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public class fieldOrianted extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        //region Getting the DcMotors from hardwereMap
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor frontLeft  = hardwareMap.dcMotor.get("frontLeft" );
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
@@ -24,49 +25,72 @@ public class fieldOrianted extends LinearOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
+        //endregion
 
+        //region INITIALIZING THE imu
+        BNO055IMU imu      = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+        //endregion
+
+        //region REVERSING LEFT MOTORS
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft .setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         if(isStopRequested()){ return; }
         resetRuntime();
-        
-        double L
-        double t;
-        double x1;
-        double y1;
-        double x2;
-        double y2;
-        double a;
-        double b = 0;
+
 
         double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        //endregion
+        waitForStart();
+        if(isStopRequested()){ return; }
+        resetRuntime();
 
+        //region SETTING VARIABLES
+        double L, t, x1, y1, x2, y2, a, b;
+        //endregion
         while (opModeIsActive()){
+            // region UPDATING THE INPUT
+            b  = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
             y1 = -gamepad1.left_stick_y;
             x1 =  gamepad1.left_stick_x;
-            t =  gamepad1.right_stick_x;
+            t  =  gamepad1.right_stick_x;
+            // endregion
+
+            // region DOING THE CALCULATION
             L = Math.sqrt(x1 * x1 + y1 * y1);
             a = Math.atan2(y1, x1);
-           y2 = L * (Math.sin(a + b));
-           x2 = L * (Math.cos(a + b));
+            y2 = L * Math.sin(a + b);
+            x2 = L * Math.cos(a + b);
+            // endregion
 
             // region SECOND PART
             double fR = (y1-x1-t);
             double fL = (y1+x1+t);
             double bR = (y1+x1-t);
             double bL = (y1-x1+t);
+            // region NORMALIZING THE POWER
+            double fR = y2 - x2 - t;
+            double fL = y2 + x2 + t;
+            double bR = y2 + x2 - t;
+            double bL = y2 - x2 + t;
 
-            double max1 = Math.max(fR , fL);
-            double max2 = Math.max(bR , bL);
+            double max1 = Math.max(Math.abs(fR) , Math.abs(fL));
+            double max2 = Math.max(Math.abs(bR) , Math.abs(bL));
             double maxF = Math.max(max2 , max1);
+            if(maxF>1) {
 
-            fR /= maxF;
-            fL /= maxF;
-            bR /= maxF;
-            bL /= maxF;
+                fR /= maxF;
+                fL /= maxF;
+                bR /= maxF;
+                bL /= maxF;
+            }
+            // endregion
 
+            //region SETTING POWER
             frontRight.setPower(fR);
             frontLeft .setPower(fL);
             backRight .setPower(bR);
