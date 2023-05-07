@@ -10,6 +10,26 @@ public class moduleTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        // p = power
+
+        // 12   : ORR (overall reduction ratio)
+        // 6000 : MMS (motor max speed)
+
+        // 55.556 = 111.111 / 2 : servoRPM
+        // 111.111 : initial servo rpm
+        // 2       : SPR (servo pulley ratio)
+
+        // WWS (wanted wheel speed) : inputSpeed * WMS
+        // 495 : WMS (wheel max speed)
+        // inputSpeed : 0 -> 1
+
+        // WWS = (MMS * p - servoRPM) / ORR
+        // WWS * ORR = MMS * p - servoRPM
+        // WWS * ORR + servoRPM = MMS * p
+        // (WWS * ORR + servoRPM) / MMS = p
+
+        // p = (inputSpeed * WMS * ORR + servoRPM) / MMS
+
         waitForStart();
         if(isStopRequested()) { return; }
         resetRuntime();
