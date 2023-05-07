@@ -123,7 +123,7 @@ public class ManualDrive extends LinearOpMode {
 
         boolean grabb_is_in;
 
-        double first_time;
+        double first_time = 0;
 
         // set the servos to be in
         extendArm(0);
@@ -165,10 +165,10 @@ public class ManualDrive extends LinearOpMode {
             // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
             //                      [      straight       ] [       lateral       ] [         turn         ]
-            double frontRightPower =          -y2           +          x2           + gamepad1.right_stick_x;
-            double frontLeftPower  =          -y2           -          x2           - gamepad1.right_stick_x;
-            double backRightPower  =          -y2           -          x2           + gamepad1.right_stick_x;
-            double backLeftPower   =          -y2           +          x2           - gamepad1.right_stick_x;
+            double frontRightPower = -y2 + x2 + gamepad1.right_stick_x;
+            double frontLeftPower = -y2 - x2 - gamepad1.right_stick_x;
+            double backRightPower = -y2 - x2 + gamepad1.right_stick_x;
+            double backLeftPower = -y2 + x2 - gamepad1.right_stick_x;
             // endregion
 
             // region NORMALIZE MOTOR POWER
@@ -177,20 +177,20 @@ public class ManualDrive extends LinearOpMode {
             double highestAbsoluteNum = Math.max(Math.max(Math.abs(frontRightPower), Math.abs(frontLeftPower)), Math.max(Math.abs(backRightPower), Math.abs(backLeftPower)));
 
             // if the motors aren't capable of the power requirement
-            if(highestAbsoluteNum > 1) {
+            if (highestAbsoluteNum > 1) {
                 // normalize the motor powers to be between -1 to 1
                 frontRightPower /= highestAbsoluteNum;
-                frontLeftPower  /= highestAbsoluteNum;
-                backRightPower  /= highestAbsoluteNum;
-                backLeftPower   /= highestAbsoluteNum;
+                frontLeftPower /= highestAbsoluteNum;
+                backRightPower /= highestAbsoluteNum;
+                backLeftPower /= highestAbsoluteNum;
             }
             // endregion
 
             // region SET MOTOR POWER
             frontRight.setPower(frontRightPower);
-            frontLeft .setPower(frontLeftPower );
-            backRight .setPower(backRightPower );
-            backLeft  .setPower(backLeftPower  );
+            frontLeft.setPower(frontLeftPower);
+            backRight.setPower(backRightPower);
+            backLeft.setPower(backLeftPower);
             // endregion
 
             // region give power for opening intake
@@ -206,36 +206,31 @@ public class ManualDrive extends LinearOpMode {
             trigger = lastest_trigger;
             lastest_trigger = (gamepad1.left_trigger > 0.05);
 
-            if (dpad_click) { is_in = !is_in; }
+            if (dpad_click) {
+                is_in = !is_in;
+            }
 
-            if (lastest_trigger) {
-                setPosition(heights[1]);
-            }
-            else if(trigger) {
-                setPosition(heights[0]);
-            }
-            else if (dpad_click){
-                if (gamepad1.dpad_up   ) {
-                    setPosition(heights[5]);
-                }
-                else if (gamepad1.dpad_right) {
-                    setPosition(heights[4]);
-                }
-                else if (gamepad1.dpad_down ) {
-                    setPosition(heights[3]);
-                }
-                else if (gamepad1.dpad_left ) {
-                    setPosition(heights[2]);
-                }
+            if (lastest_trigger) {setPosition(heights[1]);}
+            else if (trigger) {setPosition(heights[0]);}
+
+            else if (dpad_click) {
                 first_time = getRuntime();
-                if((first_time + 0.5) > getRuntime()){
-                    if(grabberDistanceToConeSensor.getDistance(DistanceUnit.MM) < 50){
-                        grabber.setPosition(grabPosition);
-                    }
+                if      (gamepad1.dpad_up   ) {setPosition(heights[5]);}
+                else if (gamepad1.dpad_right) {setPosition(heights[4]);}
+                else if (gamepad1.dpad_down ) {setPosition(heights[3]);}
+                else if (gamepad1.dpad_left ) {setPosition(heights[2]);}
+                else if (!is_in) {
+                    setPosition(heights[0]);
                 }
-            } else if (!is_in) {
-                setPosition(heights[0]);
             }
+            if(first_time + 0.5 > getRuntime() || !is_in){
+                if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 80){
+                    grabber.setPosition(grabPosition);
+                }
+            }
+
+
+
 
         }
     }
