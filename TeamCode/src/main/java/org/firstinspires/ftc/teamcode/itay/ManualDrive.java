@@ -224,7 +224,7 @@ public class ManualDrive extends LinearOpMode {
                 }
             }
             if(first_time + 0.5 > getRuntime() || !is_in){
-                if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 80){
+                if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 9){
                     grabber.setPosition(grabPosition);
                 }
             }

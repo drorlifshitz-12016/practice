@@ -13,10 +13,20 @@ public class Test extends LinearOpMode {
 
     static DigitalChannel isOutSensor;
 
+    static  Servo grabber;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         isOutSensor = hardwareMap.get(DigitalChannel.class, "grabberIsOutSensor");
+
+        DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
+
+        grabber = hardwareMap.servo.get("grabber");
+
+        final double grabPosition = 0.40;
+        final double releasePosition = 0.18;
+
 
         boolean grabb_is_in;
 
@@ -28,9 +38,15 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            grabb_is_in = !isOutSensor.getState();
-            telemetry.addData("are you in",grabb_is_in);
-            telemetry.update();
+        if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 8){
+            grabber.setPosition(grabPosition);
+        }
+        else if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) > 9){
+            grabber.setPosition(releasePosition);
+        }
+
+
+
         }
     }
 }
