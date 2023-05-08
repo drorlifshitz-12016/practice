@@ -35,4 +35,16 @@ public class moduleTesting extends LinearOpMode {
         resetRuntime();
 
     }
+    // region CONSTANTS
+    final static int motorReductionRatio = 12;
+    final static int maxMotorSpeed = 6000;
+    final static double initialServoSpeed = 111.111;
+    final static double servoReductionRatio = 2;
+    final static double servoRPM = initialServoSpeed / servoReductionRatio;
+
+    final static double maxWheelSpeed = (maxMotorSpeed - servoRPM) / motorReductionRatio;
+    // endregion
+    static double calculateMotorSpeed(double power){
+        return (power * maxWheelSpeed * motorReductionRatio + servoRPM) / maxMotorSpeed;
+    }
 }
