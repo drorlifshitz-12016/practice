@@ -19,6 +19,7 @@ public class ExtendArm extends LinearOpMode {
     // endregion
 
     @Override
+
     public void runOpMode() throws InterruptedException {
         // region SERVO INITIALIZATION
         // get servos from the hardware map
