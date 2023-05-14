@@ -118,8 +118,6 @@ public class Test extends LinearOpMode {
         //highets_For_Grabbers
         final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
 
-        final double grabPosition = 0.40;
-        final double releasePosition = 0.18;
 
         boolean dpad;
         boolean lastest_dpad = false;
@@ -127,6 +125,13 @@ public class Test extends LinearOpMode {
         boolean is_in = true;
         boolean trigger;
         boolean lastest_trigger = false;
+
+
+        grabber = hardwareMap.servo.get("grabber");
+
+        final double grabPosition = 0.40;
+        final double releasePosition = 0.18;
+
 
         boolean grabb_is_in;
 
@@ -247,6 +252,13 @@ public class Test extends LinearOpMode {
             else if (gamepad1.b){
                 grabber.setPosition(releasePosition);
             }
+
+        if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 8){
+            grabber.setPosition(grabPosition);
+        }
+        else if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) > 9){
+            grabber.setPosition(releasePosition);
+        }
 
 
         }
