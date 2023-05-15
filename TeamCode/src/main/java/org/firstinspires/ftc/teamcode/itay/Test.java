@@ -253,13 +253,6 @@ public class Test extends LinearOpMode {
                 grabber.setPosition(releasePosition);
             }
 
-        if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 8){
-            grabber.setPosition(grabPosition);
-        }
-        else if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) > 9){
-            grabber.setPosition(releasePosition);
-        }
-
 
         }
     }

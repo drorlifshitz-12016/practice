@@ -219,13 +219,14 @@ public class ManualDrive extends LinearOpMode {
                 else if (gamepad1.dpad_right) {setPosition(heights[4]);}
                 else if (gamepad1.dpad_down ) {setPosition(heights[3]);}
                 else if (gamepad1.dpad_left ) {setPosition(heights[2]);}
-                else if (!is_in) {
+                else if (is_in) {
                     setPosition(heights[0]);
                 }
             }
             if(first_time + 0.5 > getRuntime() || !is_in){
                 if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 9){
                     grabber.setPosition(grabPosition);
+                    first_time = getRuntime();
                 }
             }
 
