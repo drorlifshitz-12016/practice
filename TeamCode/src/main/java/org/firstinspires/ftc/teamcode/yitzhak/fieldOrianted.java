@@ -38,12 +38,6 @@ public class fieldOrianted extends LinearOpMode {
         resetRuntime();
 
 
-        double angle = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        //endregion
-        waitForStart();
-        if(isStopRequested()){ return; }
-        resetRuntime();
-
         //region SETTING VARIABLES
         double L, t, x1, y1, x2, y2, a, b;
         //endregion
