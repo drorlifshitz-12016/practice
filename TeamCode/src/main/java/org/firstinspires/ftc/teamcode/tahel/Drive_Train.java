@@ -50,7 +50,8 @@ public class Drive_Train extends LinearOpMode {
         double[] grabberPosition = new double[]{0.36 , 0.18};
         double grab = grabberPosition[0];
         double release = grabberPosition[1];
-        double  supposedToBe    = heights[5];
+        double supposedToBe     = heights[5];
+        double armSupposedToBe  = 0;
         boolean upWasPressed    = false;
         boolean downWasPressed  = false;
         boolean leftWasPressed  = false;
@@ -81,6 +82,7 @@ public class Drive_Train extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+        waitForStart();
         //Keeps the arm closed
         armRight.setPosition(1);
         armLeft.setPosition(1);
@@ -88,32 +90,34 @@ public class Drive_Train extends LinearOpMode {
         grabberLeft.setPosition(heights[5]);
         grabber.setPosition(release);
 
-        waitForStart();
         if (isStopRequested()) {
             return;
         }
         resetRuntime();
 
-
-
-
         while (opModeIsActive()) {
-
-
             //Opens and closes the arm by pressing the trigger
             telemetry.addData("position" , supposedToBe);
             telemetry.update();
+            if(ds.getDistance(DistanceUnit.CM) < 8){
+                grabber.setPosition(grab);
+            }
+            if(ds.getDistance(DistanceUnit.CM) > 8){
+                grabber.setPosition(release);
+            }
             if (gamepad1.left_trigger > 0) {
                 armRight.setPosition(0);
                 armLeft.setPosition(0);
                 grabberRight.setPosition(heights[0]);
                 grabberLeft.setPosition(heights[0]);
+                armSupposedToBe = 1;
             } else {
-                if (grabberLeft.getPosition() == heights[0]) {
+                if (armSupposedToBe == 1) {
                     armRight.setPosition(1);
                     armLeft.setPosition(1);
                     grabberRight.setPosition(heights[5]);
                     grabberLeft.setPosition(heights[5]);
+                    armSupposedToBe = 0;
                 }
             }
             //Opens and closes the arm by pressing the dpad_up
@@ -213,19 +217,18 @@ public class Drive_Train extends LinearOpMode {
 
             // region NORMALIZE MOTOR POWER
 
-            if(ds.getDistance(DistanceUnit.CM) < 8){
-                grabber.setPosition(grab);
-                if (grabber.getPosition() == grab) {
-                    armRight.setPosition(1);
-                    armLeft.setPosition(1);
-                    grabberRight.setPosition(heights[5]);
-                    grabberLeft.setPosition(heights[5]);
-                }
-
-            }
-            if(ds.getDistance(DistanceUnit.CM) > 8) {
-                grabber.setPosition(release);
-            }
+//            if(ds.getDistance(DistanceUnit.CM) < 8){
+//                grabber.setPosition(grab);
+//                sleep(2000);
+//                while (grabber.getPosition() < grabberPosition[0]){}
+//                armRight.setPosition(1);
+//                armLeft.setPosition(1);
+//                grabberRight.setPosition(heights[5]);
+//                grabberLeft.setPosition(heights[5]);
+//            }
+//            if(ds.getDistance(DistanceUnit.CM) > 8) {
+//                grabber.setPosition(release);
+//            }
 
             // finds the highest absolute value of the non normalized motor powers
             double bigger = MAX(Math.abs(p1), Math.abs(p2), Math.abs(p3), Math.abs(p4));
