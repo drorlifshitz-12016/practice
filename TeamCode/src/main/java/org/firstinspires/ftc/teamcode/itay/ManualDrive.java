@@ -50,6 +50,10 @@ public class ManualDrive extends LinearOpMode {
         armRight.setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
     }
 
+    public boolean time_past(double first_time,double time_to_past){
+        return first_time + time_to_past < getRuntime();
+    }
+
     @Override
     public void runOpMode(){
 
@@ -107,7 +111,7 @@ public class ManualDrive extends LinearOpMode {
         // set the right servo to be reverse
         armRight.setDirection(Servo.Direction.REVERSE);
 
-        double puff_is_in  = 0.16;
+        double puff_is_in  = 0.14;
 
         final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
 
@@ -123,7 +127,9 @@ public class ManualDrive extends LinearOpMode {
 
         boolean grabb_is_in;
 
-        double first_time = 0;
+        double first_time_dpad = 0;
+        double first_time_grab = 0;
+        boolean firstTime = true;
 
         // set the servos to be in
         extendArm(0);
@@ -214,23 +220,38 @@ public class ManualDrive extends LinearOpMode {
             else if (trigger) {setPosition(heights[0]);}
 
             else if (dpad_click) {
-                first_time = getRuntime();
-                if      (gamepad1.dpad_up   ) {setPosition(heights[5]);}
-                else if (gamepad1.dpad_right) {setPosition(heights[4]);}
-                else if (gamepad1.dpad_down ) {setPosition(heights[3]);}
-                else if (gamepad1.dpad_left ) {setPosition(heights[2]);}
-                else if (is_in) {
+                first_time_dpad = getRuntime();
+                if      (gamepad1.dpad_up   ) {setPosition(heights[5]); grabber.setPosition(releasePosition);}
+                else if (gamepad1.dpad_right) {setPosition(heights[4]); grabber.setPosition(releasePosition);}
+                else if (gamepad1.dpad_down ) {setPosition(heights[3]); grabber.setPosition(releasePosition);}
+                else if (gamepad1.dpad_left ) {setPosition(heights[2]); grabber.setPosition(releasePosition);}
+                else if (!is_in) {
                     setPosition(heights[0]);
                 }
             }
-            if(first_time + 0.5 > getRuntime() || !is_in){
+
+            if(time_past(first_time_dpad,0.5) && !is_in){
+                telemetry.addData("hello1 ", "");
+                telemetry.update();
+                first_time_dpad = getRuntime();
                 if (grabberDistanceToConeSensor.getDistance(DistanceUnit.CM) < 9){
+                    telemetry.addData("hello2 ", "");
+                    telemetry.update();
+                    if(firstTime){
+                        first_time_grab = getRuntime();
+                        firstTime = false;
+                    }
                     grabber.setPosition(grabPosition);
-                    first_time = getRuntime();
+                    if (time_past(first_time_grab,2)) {
+                        telemetry.addData("hello3 ", "");
+                        telemetry.update();
+                        setPosition(heights[0]);
+                        is_in = true;
+                        firstTime = true;
+                        first_time_dpad = 0;
+                    }
                 }
             }
-
-
 
 
         }
