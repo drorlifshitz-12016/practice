@@ -42,7 +42,7 @@ public class grabbers extends LinearOpMode {
 
 
         final double grabPosition = 0.40;
-        final double releasePosition = 0.18;
+        final double openPosition = 0.18;
 
         boolean dpad;
         boolean lastest_dpad = false;

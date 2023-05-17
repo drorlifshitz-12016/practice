@@ -19,16 +19,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class ManualDrive extends LinearOpMode {
 
-    // region POSITION CONSTANTS
-    // the positions of the servo for both the in and out arm positions\
+    public boolean time_past(double first_time,double time_to_past){
+        return first_time + time_to_past < getRuntime();
+    }
+
+    static void extendArm(double position){
+        armLeft .setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
+        armRight.setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
+    }
 
     private static void setPosition(double heights) {
         grabberRight.setPosition(heights);
         grabberLeft. setPosition(heights);
     }
 
-    static final double IN_POSITION = 0.55;
-    static final double OUT_POSITION = 0.04;
     // endregion
 
     // region SERVO VARIABLES
@@ -42,27 +46,36 @@ public class ManualDrive extends LinearOpMode {
     static Servo grabber;
     static DigitalChannel isOutSensor;
 
-    static Servo rightServo;
-    static Servo leftServo ;
+    static Servo pufferServo;
+    static Servo pufferRight;
+    static Servo pufferLeft ;
 
-    static void extendArm(double position){
-        armLeft .setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
-        armRight.setPosition((OUT_POSITION - IN_POSITION) * position + IN_POSITION);
-    }
 
-    public boolean time_past(double first_time,double time_to_past){
-        return first_time + time_to_past < getRuntime();
-    }
+    // (extend arm)
+    static final double IN_POSITION = 0.55;
+    static final double OUT_POSITION = 0.04;
+
+    // collection highest
+    final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
+
+    //grabber position
+    final double grabPosition = 0.40;
+    final double openPosition = 0.18;
 
     @Override
     public void runOpMode(){
 
         grabberRight = hardwareMap.servo.get("grabberRight");
         grabberLeft  = hardwareMap.servo.get("grabberLeft" );
+        grabber      = hardwareMap.servo.get("grabber");
 
         isOutSensor = hardwareMap.get(DigitalChannel.class, "grabberIsOutSensor");
         DistanceSensor grabberDistanceToConeSensor = hardwareMap.get(DistanceSensor.class , "grabberDistanceToConeSensor");
-        grabber = hardwareMap.servo.get("grabber");
+
+        // region SERVO INITIALIZATION
+        // get servos from the hardware map
+        armRight = hardwareMap.servo.get("armRight");
+        armLeft  = hardwareMap.servo.get("armLeft" );
 
         // region GET DRIVETRAIN MOTORS
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -71,9 +84,9 @@ public class ManualDrive extends LinearOpMode {
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         // endregion
 
-        rightServo  = hardwareMap.servo.get("pufferRight");
-        leftServo   = hardwareMap.servo.get("pufferLeft" );
-
+        pufferRight  = hardwareMap.servo.get("pufferRight");
+        pufferLeft   = hardwareMap.servo.get("pufferLeft" );
+        pufferServo = hardwareMap.servo.get("puffer");
 
         // region INITIALIZE THE IMU
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -89,9 +102,12 @@ public class ManualDrive extends LinearOpMode {
         backRight .setDirection(DcMotorSimple.Direction.REVERSE);
         // endregion
 
+        // set the right servo to be reverse
+        armRight.setDirection(Servo.Direction.REVERSE);
+
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
-        rightServo.setDirection(Servo.Direction.REVERSE);
+        pufferRight.setDirection(Servo.Direction.REVERSE);
 
         // region CREATE VARIABLES FOR DRIVE TRAIN
         double x1;
@@ -103,20 +119,15 @@ public class ManualDrive extends LinearOpMode {
         double alpha;
         //endregion
 
-        // region SERVO INITIALIZATION
-        // get servos from the hardware map
-        armRight = hardwareMap.servo.get("armRight");
-        armLeft  = hardwareMap.servo.get("armLeft" );
 
-        // set the right servo to be reverse
-        armRight.setDirection(Servo.Direction.REVERSE);
-
+       /// check before the test
         double puff_is_in  = 0.14;
+        double inflatedPosition    = 0.3;
+        double releasePosition = 0.2;
+        double P_inPosition  = 0.16;
+        double P_midPosition = 0.5 ;
+        double P_outPosition = 0.95;
 
-        final double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
-
-        final double grabPosition = 0.40;
-        final double releasePosition = 0.18;
 
         boolean dpad;
         boolean lastest_dpad = false;
@@ -131,25 +142,24 @@ public class ManualDrive extends LinearOpMode {
         double first_time_grab = 0;
         boolean firstTime = true;
 
+        // region...
         // set the servos to be in
         extendArm(0);
         // endregion
 
         setPosition(heights[0]);
 
-        grabber.setPosition(releasePosition);
+        grabber.setPosition(openPosition);
 
-        rightServo.setPosition(puff_is_in);
-        leftServo. setPosition(puff_is_in);
+        pufferRight.setPosition(puff_is_in);
+        pufferLeft. setPosition(puff_is_in);
+        // endregion
 
         // region WAIT FOR START
         waitForStart();
-        if(isStopRequested()){
-            return;
-        }
+        if(isStopRequested()){return;}
         resetRuntime();
         // endregion
-
 
 
         while (opModeIsActive()) {
@@ -171,10 +181,10 @@ public class ManualDrive extends LinearOpMode {
             // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
             //                      [      straight       ] [       lateral       ] [         turn         ]
-            double frontRightPower = -y2 + x2 + gamepad1.right_stick_x;
-            double frontLeftPower = -y2 - x2 - gamepad1.right_stick_x;
-            double backRightPower = -y2 - x2 + gamepad1.right_stick_x;
-            double backLeftPower = -y2 + x2 - gamepad1.right_stick_x;
+            double frontRightPower =         -y2           +           x2          + gamepad1.right_stick_x;
+            double frontLeftPower  =         -y2           -           x2          - gamepad1.right_stick_x;
+            double backRightPower  =         -y2           -           x2          + gamepad1.right_stick_x;
+            double backLeftPower   =         -y2           +           x2          - gamepad1.right_stick_x;
             // endregion
 
             // region NORMALIZE MOTOR POWER
@@ -194,9 +204,9 @@ public class ManualDrive extends LinearOpMode {
 
             // region SET MOTOR POWER
             frontRight.setPower(frontRightPower);
-            frontLeft.setPower(frontLeftPower);
-            backRight.setPower(backRightPower);
-            backLeft.setPower(backLeftPower);
+            frontLeft  .setPower(frontLeftPower);
+            backRight  .setPower(backRightPower);
+            backLeft   .setPower(backLeftPower );
             // endregion
 
             // region give power for opening intake
@@ -221,10 +231,10 @@ public class ManualDrive extends LinearOpMode {
 
             else if (dpad_click) {
                 first_time_dpad = getRuntime();
-                if      (gamepad1.dpad_up   ) {setPosition(heights[5]); grabber.setPosition(releasePosition);}
-                else if (gamepad1.dpad_right) {setPosition(heights[4]); grabber.setPosition(releasePosition);}
-                else if (gamepad1.dpad_down ) {setPosition(heights[3]); grabber.setPosition(releasePosition);}
-                else if (gamepad1.dpad_left ) {setPosition(heights[2]); grabber.setPosition(releasePosition);}
+                if      (gamepad1.dpad_up   ) {setPosition(heights[5]); grabber.setPosition(openPosition);}
+                else if (gamepad1.dpad_right) {setPosition(heights[4]); grabber.setPosition(openPosition);}
+                else if (gamepad1.dpad_down ) {setPosition(heights[3]); grabber.setPosition(openPosition);}
+                else if (gamepad1.dpad_left ) {setPosition(heights[2]); grabber.setPosition(openPosition);}
                 else if (!is_in) {
                     setPosition(heights[0]);
                 }
@@ -249,6 +259,17 @@ public class ManualDrive extends LinearOpMode {
                         is_in = true;
                         firstTime = true;
                         first_time_dpad = 0;
+                        if(gamepad1.a){
+                            double firstTime_puffer = getRuntime();
+                            grabber.setPosition(openPosition);
+                            pufferServo.setPosition(inflatedPosition);
+                            pufferRight.setPosition(P_outPosition);
+                            pufferLeft.setPosition(P_outPosition);
+                            time_past(firstTime_puffer,1);
+                                pufferServo.setPosition(releasePosition);
+
+
+                        }
                     }
                 }
             }

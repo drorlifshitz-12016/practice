@@ -14,11 +14,11 @@ public class puffer extends LinearOpMode {
      static Servo rightServo ;
      static Servo leftServo  ;
 
-    double s_inPosition  = 0.16;
-    double s_midPosition = 0.5 ;
-    double s_outPosition = 0.95;
+    double P_inPosition  = 0.16;
+    double P_midPosition = 0.5 ;
+    double P_outPosition = 0.95;
 
-    double grabPosition    = 0.3;
+    double inflatedPosition    = 0.3;
     double releasePosition = 0.2;
 
     @Override
@@ -38,7 +38,7 @@ public class puffer extends LinearOpMode {
         while (opModeIsActive()) {
 
         if (gamepad1.a){
-            pufferServo.setPosition(grabPosition);
+            pufferServo.setPosition(inflatedPosition);
         }
         if (gamepad1.b){
             pufferServo.setPosition(releasePosition);
