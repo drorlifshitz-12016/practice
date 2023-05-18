@@ -7,17 +7,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class grabbers extends LinearOpMode {
-    // region POSITION CONSTANTS
-    // the positions of the servo for both the in and out arm positions\
+    private Servo grabberRight;
+    private Servo grabberLeft;
+    private Servo grabber;
 
-    static void setPosition(double heights) {
+    public grabbers() {
+        grabberRight = hardwareMap.servo.get("grabberRight");
+        grabberLeft = hardwareMap.servo.get("grabberLeft");
+        grabber = hardwareMap.servo.get("grabber");
+    }
+
+    public void setPosition(double heights) {
         grabberRight.setPosition(heights);
         grabberLeft. setPosition(heights);
     }
-    static Servo grabberRight;
-    static Servo grabberLeft;
-    static Servo grabber;
 
+    public void setGrabberPosition(double height) {
+        grabber.setPosition(height);
+    }
 
     @Override
     public void runOpMode(){
@@ -29,7 +36,7 @@ public class grabbers extends LinearOpMode {
 
         grabber = hardwareMap.servo.get("grabber");
 
-
+ 
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
         double inPosition  = 0.16;
