@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class grabbers extends LinearOpMode {
-    private Servo grabberRight;
-    private Servo grabberLeft;
-    private Servo grabber;
+    public Servo grabberRight;
+    public Servo grabberLeft;
+    public Servo grabber;
 
     public grabbers() {
         grabberRight = hardwareMap.servo.get("grabberRight");
@@ -36,7 +36,7 @@ public class grabbers extends LinearOpMode {
 
         grabber = hardwareMap.servo.get("grabber");
 
- 
+
         grabberRight.setDirection(Servo.Direction.REVERSE);
 
         double inPosition  = 0.16;

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class ManualDrive extends LinearOpMode {
-    private grabbers grabber;
+    private grabbers grabbers;
 
     public boolean time_past(double first_time,double time_to_past){
         return first_time + time_to_past < getRuntime();
@@ -101,7 +101,6 @@ public class ManualDrive extends LinearOpMode {
         // set the right servo to be reverse
         armRight.setDirection(Servo.Direction.REVERSE);
 
-        grabber.
         grabbers.grabberRight.setDirection(Servo.Direction.REVERSE);
 
         pufferRight.setDirection(Servo.Direction.REVERSE);
