@@ -18,6 +18,7 @@ public class exetendArm extends LinearOpMode {
         Servo grabberRight = hardwareMap.servo.get("grabberRight");
         Servo grabberLeft  = hardwareMap.servo.get("grabberLeft" );
         grabberLeft.setDirection(Servo.Direction.REVERSE);
+        Servo grabber = hardwareMap.servo.get("grabber");
 
 
 
