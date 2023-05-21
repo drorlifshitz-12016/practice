@@ -10,15 +10,14 @@ public class elevator extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
-        DcMotor motorMiddle = (DcMotorEx)hardwareMap.dcMotor.get("elevatorMiddle");
+        DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
         DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
+        DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
 
         motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorMiddle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
         if (isStopRequested()) {return;}
@@ -27,29 +26,12 @@ public class elevator extends LinearOpMode {
 
         while (opModeIsActive()){
 
-            if(gamepad1.a) {
-                motorRight.setTargetPosition(2000);
-                motorLeft.setTargetPosition(2000);
-                motorMiddle.setTargetPosition(2000);
-                motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorMiddle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLeft.setPower(0.5);
-                motorRight.setPower(0.5);
-                motorMiddle.setPower(0.5);
+            motorLeft.setPower(gamepad1.left_trigger);
+            motorRight.setPower(gamepad1.left_trigger);
+            motorMiddle.setPower(gamepad1.left_trigger);
 
-            }
-            if(gamepad1.b) {
-                motorRight.setTargetPosition(0);
-                motorLeft.setTargetPosition(0);
-                motorMiddle.setTargetPosition(0);
-                motorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorMiddle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorLeft.setPower(0);
-                motorRight.setPower(0);
-                motorMiddle.setPower(0);
-            }
+            telemetry.addData("tick:",motorLeft.getCurrentPosition());
+            telemetry.update();
 
         }
     }
