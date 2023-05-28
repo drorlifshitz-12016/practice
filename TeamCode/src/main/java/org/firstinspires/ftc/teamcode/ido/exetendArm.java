@@ -12,43 +12,46 @@ public class exetendArm extends LinearOpMode {
 
 
 
+    static Servo grabberRight;
+    static Servo grabberLeft;
+    static Servo grabber;
+    static Servo armRight;
+    static Servo armLeft;
+    public static void resetServos(){
+        armLeft.setPosition(0.2);
+        armRight.setPosition(0.2);
+        grabber.setPosition(0);
+        grabberLeft.setPosition(0);
+        grabberRight.setPosition(0);
+
+    }
+
+
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-
-        Servo grabberRight = hardwareMap.servo.get("grabberRight");
-        Servo grabberLeft  = hardwareMap.servo.get("grabberLeft" );
+        grabberRight = hardwareMap.servo.get("grabberRight");
+        grabberLeft  = hardwareMap.servo.get("grabberLeft" );
+        grabber      = hardwareMap.servo.get("grabber"     );
+        armRight     = hardwareMap.servo.get("armRight"    );
+        armLeft      = hardwareMap.servo.get("armLeft"     );
         grabberLeft.setDirection(Servo.Direction.REVERSE);
-        Servo grabber = hardwareMap.servo.get("grabber");
-        Servo armRight = hardwareMap.servo.get("armRight");
-        Servo armLeft = hardwareMap.servo.get("armLeft" );
-
-
         armRight.setDirection(Servo.Direction.REVERSE);
 
-        exetendArm
 
 
-
-
-
-        grabber.setPosition(0);
         waitForStart();
-        grabberRight.setPosition(0);
-        grabberRight.setPosition(0);
-        grabberLeft.setPosition(0);
         if(isStopRequested()){
             return;
         }
         resetRuntime();
 
         while (opModeIsActive()){
-            grabberRight.setPosition(0);
-            grabberRight.setPosition(0);
-            grabberLeft.setPosition(0);
-            grabber.setPosition(0);
+            resetServos();
 
-
-            while (gamepad1.left_trigger) {
+            while (gamepad1.left_trigger > 0 ) {
                 grabberRight.setPosition(0.85);
                 grabberLeft.setPosition(0.85);
                 armLeft.setPosition(gamepad1.left_trigger * (-0.51) + 0.55);
@@ -64,4 +67,6 @@ public class exetendArm extends LinearOpMode {
 
 
     }
+
+
 }
