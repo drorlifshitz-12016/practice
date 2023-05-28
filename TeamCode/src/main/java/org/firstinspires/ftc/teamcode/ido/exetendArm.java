@@ -39,6 +39,9 @@ public class exetendArm extends LinearOpMode {
         resetRuntime();
 
         while (opModeIsActive()){
+            grabberRight.setPosition(0);
+            grabberRight.setPosition(0);
+            grabberLeft.setPosition(0);
             while (gamepad1.left_trigger > 0) {
                 grabberRight.setPosition(0.75);
                 grabberLeft.setPosition(0.75);
