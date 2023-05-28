@@ -25,8 +25,7 @@ public class exetendArm extends LinearOpMode {
 
         armRight.setDirection(Servo.Direction.REVERSE);
 
-
-
+        exetendArm
 
 
 
