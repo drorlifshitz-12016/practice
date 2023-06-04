@@ -17,6 +17,8 @@ public class exetendArm extends LinearOpMode {
     static Servo grabber;
     static Servo armRight;
     static Servo armLeft;
+    static final double IN_POSITION = 0.55;
+    static final double OUT_POSITION = 0.04;
     public static void resetServos(){
 
         grabber.setPosition(0);
@@ -26,8 +28,7 @@ public class exetendArm extends LinearOpMode {
         armRight.setPosition(0.55);
 
 
-        static final double IN_POSITION = 0.55;
-        static final double OUT_POSITION = 0.04;
+        
     }
 
 
