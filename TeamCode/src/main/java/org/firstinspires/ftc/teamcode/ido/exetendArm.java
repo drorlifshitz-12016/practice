@@ -20,13 +20,15 @@ public class exetendArm extends LinearOpMode {
     static final double IN_POSITION = 0.55;
     static final double OUT_POSITION = 0.04;
     static double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
+    static double grabPosition = 0.40;
+    final double openPosition = 0.18;
     public static void resetServos(){
 
-        grabber.setPosition(0);
-        grabberLeft.setPosition(0.7);
-        grabberRight.setPosition(0.7);
-        armLeft.setPosition(0.55);
-        armRight.setPosition(0.55);
+        grabber.setPosition(grabPosition);
+        grabberLeft.setPosition(0.055);
+        grabberRight.setPosition(0.055);
+        armLeft.setPosition(IN_POSITION);
+        armRight.setPosition(IN_POSITION);
 
 
         
@@ -58,15 +60,15 @@ public class exetendArm extends LinearOpMode {
             resetServos();
 
             while (gamepad1.left_trigger > 0 ) {
-
+                grabberRight.setPosition(OUT_POSITION);
+                grabberLeft.setPosition(OUT_POSITION);
                 armLeft.setPosition(gamepad1.left_trigger * 0.4);
                 armRight.setPosition(gamepad1.left_trigger * 0.4);
-                grabberRight.setPosition(0.93);
-                grabberLeft.setPosition(0.93);
+
             }
 
             while (gamepad1.right_trigger > 0) {
-                grabber.setPosition(0.6);
+                grabber.setPosition(openPosition);
             }
 
 
