@@ -19,11 +19,12 @@ public class exetendArm extends LinearOpMode {
     static Servo armLeft;
     static final double IN_POSITION = 0.55;
     static final double OUT_POSITION = 0.04;
+    static double[] heights = {0.7, 0.055, 0.06, 0.09, 0.13, 0.17};
     public static void resetServos(){
 
         grabber.setPosition(0);
-        grabberLeft.setPosition(0);
-        grabberRight.setPosition(0);
+        grabberLeft.setPosition(0.7);
+        grabberRight.setPosition(0.7);
         armLeft.setPosition(0.55);
         armRight.setPosition(0.55);
 
