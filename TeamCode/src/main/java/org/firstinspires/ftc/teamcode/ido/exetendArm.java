@@ -22,8 +22,12 @@ public class exetendArm extends LinearOpMode {
         grabber.setPosition(0);
         grabberLeft.setPosition(0);
         grabberRight.setPosition(0);
-        armLeft.setPosition(0.2);
-        armRight.setPosition(0.2);
+        armLeft.setPosition(0.55);
+        armRight.setPosition(0.55);
+
+
+        static final double IN_POSITION = 0.55;
+        static final double OUT_POSITION = 0.04;
     }
 
 
