@@ -20,18 +20,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class Test extends LinearOpMode {
 
-    public static double calculateShloshtreve(double high_now,double DST_of_ticks) {
-        return (((DST_of_ticks - high_now) / 4) * 3);
+    public static double calculateBrakingRange(double high_now,double DST_of_ticks) {
+        return (((DST_of_ticks - high_now) / 5) * 3);
     }
 
-    public boolean tick_past(double shloshtreve, int currentPosition){
-        return currentPosition > shloshtreve;
+    public boolean tick_past(double calculateBrakingRange, int currentPosition){
+        return currentPosition > calculateBrakingRange;
     }
 
-    public static void elevatorMotors(double motorPower){
-     motorMiddle.setPower(motorPower);
-     motorRight.setPower(motorPower);
-     motorLeft.setPower(motorPower);
+    public static void elevatorMotors(double motorPower) {
+        motorMiddle.setPower(motorPower);
+        motorRight.setPower(motorPower);
+        motorLeft.setPower(motorPower);
     }
 
     static DcMotor motorRight;
@@ -41,9 +41,9 @@ public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        DcMotor motorRight  = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
-        DcMotor motorLeft   = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
-        DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
+        motorRight  = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
+        motorLeft   = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
+        motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
 
         motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -51,27 +51,56 @@ public class Test extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         final int middlePosition = 11300;
+        final int lowPosition    = 4300 ;
+        final int highPosition   = 17500;
 
-        double CLOSE_ELEVATORE_POSITION = -motorLeft.getCurrentPosition();
-
-        boolean anotherHeight = false;
-
-        boolean check_shloshtreve = false;
-
-        double shloshtreveWay = 0;
+        boolean a = false;
+        boolean b = false;
+        boolean c = false;
 
         // region WAIT FOR START
         waitForStart();
-        if (isStopRequested()) {
-            return;
-        }
+        if (isStopRequested()) {return;}
         resetRuntime();
         // endregion
 
 
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                elevatorMotors(0.3);
+
+            if (gamepad1.a || a){
+                a = true;
+                elevatorMotors(0.8);
+                if(tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(),middlePosition),motorLeft.getCurrentPosition())){
+                    elevatorMotors(0.45);
+                    if(tick_past(middlePosition,motorLeft.getCurrentPosition())){
+                        elevatorMotors(0.15);
+                        a = false;
+                    }
+                }
+            }
+
+            if (gamepad1.b || b){
+                b = true;
+                elevatorMotors(0.8);
+                if(tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(),lowPosition),motorLeft.getCurrentPosition())){
+                    elevatorMotors(0.45);
+                    if(tick_past(lowPosition,motorLeft.getCurrentPosition())){
+                        elevatorMotors(0.15);
+                        b = false;
+                    }
+                }
+            }
+
+            if (gamepad1.y || c){
+                c = true;
+                elevatorMotors(0.8);
+                if(tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(),highPosition),motorLeft.getCurrentPosition())){
+                    elevatorMotors(0.45);
+                    if(tick_past(highPosition,motorLeft.getCurrentPosition())){
+                        elevatorMotors(0.15);
+                        c = false;
+                    }
+                }
             }
 
         }
