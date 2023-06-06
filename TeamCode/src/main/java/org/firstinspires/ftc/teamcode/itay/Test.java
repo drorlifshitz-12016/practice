@@ -58,6 +58,7 @@ public class Test extends LinearOpMode {
         boolean a_back = false;
         boolean b = false;
         boolean c = false;
+        boolean d = false;
 
         // region WAIT FOR START
         waitForStart();
@@ -69,41 +70,57 @@ public class Test extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-
-            if (gamepad1.a || a) {
+            if (gamepad1.a || a && (motorLeft.getCurrentPosition() < 4150 && motorLeft.getCurrentPosition() > 4450)) {
                 a = true;
-                if (motorLeft.getCurrentPosition() < (lowPosition - 50)) {
+                if (motorLeft.getCurrentPosition() < (lowPosition - 150)) {
                     elevatorMotors(0.95);
                     if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), lowPosition), motorLeft.getCurrentPosition())) {
                         elevatorMotors(0.6);
                         if (tick_past(lowPosition, motorLeft.getCurrentPosition())) {
                             elevatorMotors(0.15);
-                        }
-                    }
-                }
-                if (motorLeft.getCurrentPosition() > (lowPosition + 150)) {
-                    elevatorMotors(-0.5);
-                    if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), lowPosition), motorLeft.getCurrentPosition())) {
-                        elevatorMotors(0.07);
-                        if (tick_past(lowPosition, motorLeft.getCurrentPosition())) {
-                            elevatorMotors(0.15);
+                            a = false;
                         }
                     }
                 }
             }
-            if (gamepad1.x || b){
-                b = true;
-                elevatorMotors(9.5);
-                if(tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(),middlePosition),motorLeft.getCurrentPosition())){
-                    elevatorMotors(0.6);
-                    if(tick_past(middlePosition,motorLeft.getCurrentPosition())){
+
+            if ((gamepad1.a || a_back) && motorLeft.getCurrentPosition() > (lowPosition + 150)) {
+                a_back = true;
+                elevatorMotors(-0.5);
+                if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), lowPosition), motorLeft.getCurrentPosition())) {
+                    elevatorMotors(0.07);
+                    if (tick_past(lowPosition, motorLeft.getCurrentPosition())) {
                         elevatorMotors(0.15);
-                        b = false;
+                        a_back = false;
                     }
                 }
             }
 
+            if (gamepad1.x || b) {
+                b = true;
+                if (motorLeft.getCurrentPosition() < (middlePosition - 50)) {
+                    elevatorMotors(0.95);
+                    if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), middlePosition), motorLeft.getCurrentPosition())) {
+                        elevatorMotors(0.6);
+                        if (tick_past(middlePosition, motorLeft.getCurrentPosition())) {
+                            elevatorMotors(0.15);
+                            b = false;
+                        }
+                    }
+                }
+                if (motorLeft.getCurrentPosition() > (middlePosition + 150)) {
+                    elevatorMotors(-0.5);
+                    if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), middlePosition), motorLeft.getCurrentPosition())) {
+                        elevatorMotors(0.07);
+                        if (tick_past(middlePosition, motorLeft.getCurrentPosition())) {
+                            elevatorMotors(0.15);
+                            b = false;
+                        }
+                    }
+                }
+            }
 
+//high
             if (gamepad1.y || c){
                 c = true;
                 elevatorMotors(9.5);
@@ -112,6 +129,18 @@ public class Test extends LinearOpMode {
                     if(tick_past(highPosition,motorLeft.getCurrentPosition())){
                         elevatorMotors(0.15);
                         c = false;
+                    }
+                }
+            }
+//0
+            if (gamepad1.b || d){
+                d = true;
+                elevatorMotors(-0.13);
+                if(tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(),0),motorLeft.getCurrentPosition())){
+                    elevatorMotors(0.07);
+                    if(tick_past(0,motorLeft.getCurrentPosition())){
+                        elevatorMotors(0.07);
+                        d = false;
                     }
                 }
             }
