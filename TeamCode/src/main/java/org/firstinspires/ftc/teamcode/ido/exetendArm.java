@@ -58,12 +58,12 @@ public class exetendArm extends LinearOpMode {
         while (opModeIsActive()){
             resetServos();
 
-            while (gamepad1.left_trigger > 0 ) {
+            if (gamepad1.left_trigger > 0 ) {
 
                 grabberRight.setPosition(0.85);
                 grabberLeft.setPosition(0.85);
-                armLeft.setPosition(gamepad1.left_trigger);
-                armRight.setPosition(gamepad1.left_trigger);
+                armLeft.setPosition(gamepad1.left_trigger * 0.4);
+                armRight.setPosition(gamepad1.left_trigger *0.4);
 
 
             }
