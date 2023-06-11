@@ -17,18 +17,30 @@ public class exetendArm extends LinearOpMode {
     static Servo grabber;
     static Servo armRight;
     static Servo armLeft;
-    static double IN_POSITION = 0.55;
-    static double OUT_POSITION = 0.04;
+
     static double grabPosition = 0.40;
     static double openPosition = 0.18;
-    public static void resetServos(){
+    static Servo pufferServo;
+    static Servo rightServo ;
+    static Servo leftServo  ;
+
+    double P_inPosition  = 0.16;
+
+
+    double inflatedPosition    = 0.3;
+    double releasePosition = 0.2;
+
+
+
+
+        public static void resetServos(){
 
         grabber.setPosition(openPosition);
         grabberLeft.setPosition(0.055);
         grabberRight.setPosition(0.055);
-        armLeft.setPosition(IN_POSITION);
-        armRight.setPosition(IN_POSITION);
 
+        rightServo.setPosition(0.16);
+        leftServo.setPosition(0.16);
 
         
     }
@@ -47,6 +59,11 @@ public class exetendArm extends LinearOpMode {
         grabberLeft.setDirection(Servo.Direction.REVERSE);
         armRight.setDirection(Servo.Direction.REVERSE);
 
+        pufferServo = hardwareMap.servo.get("puffer");
+        rightServo  = hardwareMap.servo.get("pufferRight");
+        leftServo   = hardwareMap.servo.get("pufferLeft" );
+
+        rightServo.setDirection(Servo.Direction.REVERSE);
 
 
         waitForStart();
@@ -59,19 +76,16 @@ public class exetendArm extends LinearOpMode {
             resetServos();
 
             if (gamepad1.left_trigger > 0 ) {
-
-                grabberRight.setPosition(0.85);
-                grabberLeft.setPosition(0.85);
-                armLeft.setPosition(gamepad1.left_trigger * 0.4);
-                armRight.setPosition(gamepad1.left_trigger *0.4);
-
+                armLeft.setPosition(OUT_POSITION );
+                armRight.setPosition(OUT_POSITION);
+                grabberRight.setPosition(0.7);
+                grabberLeft.setPosition(0.7);
 
             }
 
             while (gamepad1.right_trigger > 0) {
                 grabber.setPosition(grabPosition);
             }
-
 
         }
 
