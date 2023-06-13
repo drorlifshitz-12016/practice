@@ -74,7 +74,7 @@ public class exetendArm extends LinearOpMode {
 
             armLeft.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
             armRight.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
-           if (gamepad1.left_trigger > 0 ) {
+        /*   if (gamepad1.left_trigger > 0 ) {
 
                 grabberRight.setPosition(0.85);
                 grabberLeft.setPosition(0.85);
@@ -83,7 +83,7 @@ public class exetendArm extends LinearOpMode {
                grabberRight.setPosition(0.055);
                grabberLeft.setPosition(0.055);
            }
-
+*/
             if (gamepad1.right_trigger > 0) {
                 grabber.setPosition(grabPosition);
 
