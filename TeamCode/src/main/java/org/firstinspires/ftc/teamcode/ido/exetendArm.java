@@ -86,6 +86,9 @@ public class exetendArm extends LinearOpMode {
 
             if (gamepad1.right_trigger > 0) {
                 grabber.setPosition(grabPosition);
+
+            } else {
+                grabber.setPosition(openPosition);
             }
 
         }
