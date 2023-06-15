@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.ido;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 
 @TeleOp
 public class exetendArm extends LinearOpMode {
@@ -15,8 +17,12 @@ public class exetendArm extends LinearOpMode {
     static Servo armRight;
     static Servo armLeft;
 
-    static final double IN_POSITION = 0.55;
-    static final double OUT_POSITION = 0.04;
+    static double IN_POSITION = 0.54;
+    static double OUT_POSITION = 0.04;
+
+    static double openGrabber = 0.88;
+
+    static double closeGrabber = 0.055;
 
     static double grabPosition = 0.40;
     static double openPosition = 0.18;
@@ -36,11 +42,11 @@ public class exetendArm extends LinearOpMode {
     public static void resetServos(){
 
         grabber.setPosition(openPosition);
-        grabberLeft.setPosition(0.055);
-        grabberRight.setPosition(0.055);
+        grabberLeft.setPosition(closeGrabber);
+        grabberRight.setPosition(closeGrabber);
 
-        rightServo.setPosition(0.16);
-        leftServo.setPosition(0.16);
+        rightServo.setPosition(0.14);
+        leftServo.setPosition(0.14);
 
         
     }
@@ -65,32 +71,38 @@ public class exetendArm extends LinearOpMode {
 
         rightServo.setDirection(Servo.Direction.REVERSE);
 
-
         waitForStart();
+        resetServos();
+
+
         if(isStopRequested()){return;}
         resetRuntime();
-        resetServos();
-        while (opModeIsActive()){
 
+        while (opModeIsActive()){
             armLeft.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
             armRight.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
-        /*   if (gamepad1.left_trigger > 0 ) {
 
-                grabberRight.setPosition(0.85);
-                grabberLeft.setPosition(0.85);
+           if (gamepad1.left_trigger > 0 ) {
+
+                grabberRight.setPosition(openGrabber);
+                grabberLeft.setPosition(openGrabber);
             } else {
-
-               grabberRight.setPosition(0.055);
-               grabberLeft.setPosition(0.055);
+//
+               grabberRight.setPosition(closeGrabber);
+               grabberLeft.setPosition(closeGrabber);
            }
-*/
+
             if (gamepad1.right_trigger > 0) {
                 grabber.setPosition(grabPosition);
 
             } else {
                 grabber.setPosition(openPosition);
             }
-
+            if (gamepad1.a) {
+                   pufferServo.setPosition(inflatedPosition);
+            }   else {
+                pufferServo.setPosition(releasePosition);
+            }
         }
 
 
