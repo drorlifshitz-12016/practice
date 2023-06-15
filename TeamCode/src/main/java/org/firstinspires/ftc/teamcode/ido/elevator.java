@@ -14,7 +14,7 @@ public class elevator extends LinearOpMode {
         DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
         DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
 
-        motorRight.set  Direction(DcMotorSimple.Direction.REVERSE);
+        motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         if (isStopRequested()) {return;}
@@ -26,6 +26,9 @@ public class elevator extends LinearOpMode {
             motorRight.setPower(gamepad1.left_trigger);
             motorMiddle.setPower(gamepad1.left_trigger);
 
+
+            telemetry.addData("tick:", motorLeft.getCurrentPosition());
+            telemetry.update();
 
 
         }

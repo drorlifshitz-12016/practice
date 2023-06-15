@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.ido;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -69,8 +72,15 @@ public class exetendArm extends LinearOpMode {
         rightServo  = hardwareMap.servo.get("pufferRight");
         leftServo   = hardwareMap.servo.get("pufferLeft" );
 
+
         rightServo.setDirection(Servo.Direction.REVERSE);
         resetServos();
+
+        DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
+        DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
+        DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
+
+        motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -81,6 +91,15 @@ public class exetendArm extends LinearOpMode {
         while (opModeIsActive()){
             armLeft.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
             armRight.setPosition(gamepad1.left_trigger * (OUT_POSITION - IN_POSITION) + IN_POSITION);
+
+
+            motorLeft.setPower(gamepad1.left_stick_y);
+            motorRight.setPower(gamepad1.left_stick_y);
+            motorMiddle.setPower(gamepad1.left_stick_y);
+
+
+            telemetry.addData("tick:", motorLeft.getCurrentPosition());
+            telemetry.update();
 
            if (gamepad1.left_trigger > 0 ) {
 
