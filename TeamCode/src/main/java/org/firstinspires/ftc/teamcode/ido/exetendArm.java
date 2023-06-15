@@ -20,7 +20,7 @@ public class exetendArm extends LinearOpMode {
     static double IN_POSITION = 0.54;
     static double OUT_POSITION = 0.04;
 
-    static double openGrabber = 0.88;
+    static double openGrabber = 0.86;
 
     static double closeGrabber = 0.055;
 
@@ -70,9 +70,9 @@ public class exetendArm extends LinearOpMode {
         leftServo   = hardwareMap.servo.get("pufferLeft" );
 
         rightServo.setDirection(Servo.Direction.REVERSE);
+        resetServos();
 
         waitForStart();
-        resetServos();
 
 
         if(isStopRequested()){return;}
