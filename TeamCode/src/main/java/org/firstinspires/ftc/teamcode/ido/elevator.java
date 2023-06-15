@@ -10,9 +10,11 @@ public class elevator extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("motorRight");
-        DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("motorLeft");
-        DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("motorMiddle");
+        DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
+        DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
+        DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
+
+        motorRight.reve
 
         waitForStart();
         if (isStopRequested()) {return;}
@@ -20,9 +22,9 @@ public class elevator extends LinearOpMode {
 
 
         while (opModeIsActive()){
-            motorLeft.setPower(gamepad1.left_stick_y);
-            motorRight.setPower(gamepad1.left_stick_y);
-            motorMiddle.setPower(gamepad1.left_stick_y);
+            motorLeft.setPower(gamepad1.left_trigger);
+            motorRight.setPower(gamepad1.left_trigger);
+            motorMiddle.setPower(gamepad1.left_trigger);
 
 
 
