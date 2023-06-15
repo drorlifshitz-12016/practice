@@ -14,7 +14,7 @@ public class elevator extends LinearOpMode {
         DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
         DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
 
-        motorRight.reve
+        motorRight.set  Direction(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
         if (isStopRequested()) {return;}
