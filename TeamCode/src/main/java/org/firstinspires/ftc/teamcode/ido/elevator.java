@@ -25,7 +25,8 @@ public class elevator extends LinearOpMode {
             motorLeft.setPower(gamepad1.left_trigger);
             motorRight.setPower(gamepad1.left_trigger);
             motorMiddle.setPower(gamepad1.left_trigger);
-
+        if (gamepad1.a);
+        motorLeft.getCurrentPosition();
 
             telemetry.addData("tick:", motorLeft.getCurrentPosition());
             telemetry.update();
