@@ -22,14 +22,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class elevator extends LinearOpMode {
 
     public static int where_are_now(int curentPos){
-        if (curentPos < 270)                       {return 0;}
-        if (curentPos < 4500 & curentPos > 4120)   {return 1;}
-        if (curentPos < 11470 & curentPos > 11100) {return 2;}
+        if (curentPos < 310)                       {return 0;}
+        if (curentPos < 4560 & curentPos > 4080)   {return 1;}
+        if (curentPos < 11500 & curentPos > 11100) {return 2;}
         if (curentPos > 17250)                     {return 3;}
         else {return 4;}
-    }
-    public boolean time_past(double first_time,double time_to_past){
-        return first_time + time_to_past < getRuntime();
     }
 
     public static int calculateBrakingRange(int wantedPos, int currentPos) {
@@ -73,7 +70,7 @@ public class elevator extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // endregion
 
-        double curentPosition = 0;
+        int curentPosition = 0;
         int your_target = 0;
         boolean enterToLoop = false;
         boolean a = false;
@@ -102,13 +99,18 @@ public class elevator extends LinearOpMode {
                         elevatorMotors(GoingUpSlowlyPower);
                        if (tick_past(your_target,motorLeft.getCurrentPosition())){
                             elevatorMotors(holdingPower);
-
                             enterToLoop = false;
                         }
                     }
                 }
-                if (your_target < where_are_now(curentPos)){
+                if (your_target < where_are_now(motorLeft.getCurrentPosition())){
                     elevatorMotors(goingDownPower);
+                    if (tick_past(calculateBrakingRange(your_target,curentPosition),curentPosition)){
+                        elevatorMotors(0.1);
+                        if (tick_past(your_target,curentPosition)){
+                            elevatorMotors(holdingPower);
+                        }
+                    }
 
                 }
             }
