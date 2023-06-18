@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -20,23 +21,27 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class Test extends LinearOpMode {
 
-    public static double calculatePower(int wantedPos, int slowingPos, int currentPos){
-        if(!tick_past(slowingPos,currentPos)){
-            return 1;
-        }
-        else if(tick_past(slowingPos, currentPos) && !tick_past(wantedPos, currentPos)){
-            return 0.65;
-        }
-        else {
-            return 0.15;
+    public static void calculatePower(int wantedPos, int currentPos, int slowly){
+        elevatorMotors(0.85);
+        if (tick_past(slowly,currentPos)){
+            t.addData("brakingrange", slowly);
+            t.update();
+            elevatorMotors(0.5);
+        if (tick_past(wantedPos,currentPos)){
+            elevatorMotors(0.07);
+            }
         }
     }
 
-    public static int calculateBrakingRange(int currentPos, int wantedPos) {
+    public boolean time_past(double first_time,double time_to_past){
+        return first_time + time_to_past < getRuntime();
+    }
+
+    public static int calculateBrakingRange(int wantedPos, int currentPos) {
         return (wantedPos - currentPos) * 3 / 5;
     }
-    public static boolean tick_past(int wantedPosition, int currentPosition){
-        return currentPosition > wantedPosition;
+    public static boolean tick_past(int wantedPos, int currentPosition){
+        return currentPosition > wantedPos;
     }
     public static void elevatorMotors(double motorPower) {
         motorMiddle.setPower(motorPower);
@@ -51,8 +56,10 @@ public class Test extends LinearOpMode {
     final static int middlePosition = 11300;
     final static int lowPosition    = 4300 ;
     final static int highPosition   = 17500;
+    static Telemetry t;
     @Override
     public void runOpMode() {
+        t = telemetry;
         // region INITIALIZE THE MOTORS
         motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
         motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
@@ -64,6 +71,7 @@ public class Test extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // endregion
 
+        int slowly;
         boolean b = false;
         boolean c = false;
         boolean d = false;
@@ -79,50 +87,9 @@ public class Test extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-
-            if (gamepad1.a && (whereAareYouNow != 1)) {
-                elevatorMotors(calculatePower(lowPosition, calculateBrakingRange(motorLeft.getCurrentPosition(), lowPosition), motorLeft.getCurrentPosition()));
-                whereAareYouNow = 1;
-
-            } else if (1>1) {
-                elevatorMotors(-0.5);
-                if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), lowPosition), motorLeft.getCurrentPosition())) {
-                    elevatorMotors(0.07);
-                    if (tick_past(lowPosition, motorLeft.getCurrentPosition())) {
-                        elevatorMotors(0.15);
-                        whereAareYouNow = 1;
-                    }
-                }
-            }
-
-            if (gamepad1.x) {
-                elevatorMotors(calculatePower(middlePosition, calculateBrakingRange(motorLeft.getCurrentPosition(), middlePosition), motorLeft.getCurrentPosition()));
-                whereAareYouNow = 2;
-            }
-
-    //high
-            if (gamepad1.y || c) {
-                c = true;
-                elevatorMotors(9.5);
-                if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), highPosition), motorLeft.getCurrentPosition())) {
-                    elevatorMotors(0.6);
-                    if (tick_past(highPosition, motorLeft.getCurrentPosition())) {
-                        elevatorMotors(0.15);
-                        c = false;
-                    }
-                }
-            }
-    //0
-            if (gamepad1.b || d) {
-                d = true;
-                elevatorMotors(-0.13);
-                if (tick_past(calculateBrakingRange(motorLeft.getCurrentPosition(), 0), motorLeft.getCurrentPosition())) {
-                    elevatorMotors(0.07);
-                    if (tick_past(0, motorLeft.getCurrentPosition())) {
-                        elevatorMotors(0.07);
-                        d = false;
-                    }
-                }
+            if (gamepad1.a) {
+                slowly = 2580;
+                calculatePower(lowPosition,motorLeft.getCurrentPosition(),slowly);
             }
 
         }
