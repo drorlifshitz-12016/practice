@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ido;
+package org.firstinspires.ftc.teamcode.itay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class elevator extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        double getCurrentPosition;
+
         DcMotor motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
         DcMotor motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
         DcMotor motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
@@ -23,17 +23,15 @@ public class elevator extends LinearOpMode {
         if (isStopRequested()) {return;}
         resetRuntime();
 
-        telemetry.addData("tick:", motorLeft.getCurrentPosition());
+
         while (opModeIsActive()){
+
             motorLeft.setPower(gamepad1.left_trigger);
             motorRight.setPower(gamepad1.left_trigger);
             motorMiddle.setPower(gamepad1.left_trigger);
-        if (gamepad1.a);
-        motorLeft.getCurrentPosition(4600);
 
-
+            telemetry.addData("tick:", motorLeft.getCurrentPosition());
             telemetry.update();
-
 
         }
     }
