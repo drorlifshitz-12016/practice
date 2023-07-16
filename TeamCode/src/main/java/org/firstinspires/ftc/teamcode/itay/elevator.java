@@ -21,14 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class elevator extends LinearOpMode {
 
-    public static int where_are_now(int curentPos){
-        if (curentPos < 310)                       {return 0;}
-        if (curentPos < 4560 & curentPos > 4080)   {return 1;}
-        if (curentPos < 11500 & curentPos > 11100) {return 2;}
-        if (curentPos > 17250)                     {return 3;}
-        else {return 4;}
-    }
-
     public static int calculateBrakingRange(int wantedPos, int currentPos) {
         return (wantedPos - currentPos) * 3 / 5;
     }
@@ -60,8 +52,8 @@ public class elevator extends LinearOpMode {
     public void runOpMode() {
         t = telemetry;
         // region INITIALIZE THE MOTORS
-        motorRight = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
-        motorLeft = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
+        motorRight  = (DcMotorEx) hardwareMap.dcMotor.get("elevatorRight");
+        motorLeft   = (DcMotorEx) hardwareMap.dcMotor.get("elevatorLeft");
         motorMiddle = (DcMotorEx) hardwareMap.dcMotor.get("elevatorMiddle");
 
         motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,12 +62,9 @@ public class elevator extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // endregion
 
-        int curentPosition = 0;
+        int curentPos = 0;
         int your_target = 0;
         boolean enterToLoop = false;
-        boolean a = false;
-        boolean x = false;
-        boolean y = false;
 
         waitForStart();
         if (isStopRequested()) {return;}
@@ -84,16 +73,16 @@ public class elevator extends LinearOpMode {
 
         while (opModeIsActive()){
 
-            curentPosition = motorLeft.getCurrentPosition();
+            curentPos = motorLeft.getCurrentPosition();
 
             if (gamepad1.b){your_target = 0;}
             if (gamepad1.a){your_target = lowPosition   ;}
             if (gamepad1.x){your_target = middlePosition;}
             if (gamepad1.y){your_target = highPosition  ;}
 
-            if(gamepad1.a || gamepad1.x || gamepad1.y || enterToLoop){
-                enterToLoop = true;
-                if (your_target > where_are_now(your_target)){
+            if(gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y || enterToLoop){
+                if (your_target > curentPos){
+                    enterToLoop = true;
                     elevatorMotors(goingUpPower);
                     if (tick_past(calculateBrakingRange(your_target,motorLeft.getCurrentPosition()),motorLeft.getCurrentPosition())){
                         elevatorMotors(GoingUpSlowlyPower);
@@ -103,53 +92,22 @@ public class elevator extends LinearOpMode {
                         }
                     }
                 }
-                if (your_target < where_are_now(motorLeft.getCurrentPosition())){
+                else if (your_target < curentPos){
+                    enterToLoop = true;
                     elevatorMotors(goingDownPower);
-                    if (tick_past(calculateBrakingRange(your_target,curentPosition),curentPosition)){
-                        elevatorMotors(0.1);
-                        if (tick_past(your_target,curentPosition)){
-                            elevatorMotors(holdingPower);
+                    if (tick_past(your_target,curentPos)){
+                        elevatorMotors(holdingPower);
+                        enterToLoop = false;
                         }
                     }
 
                 }
-            }
-
-
-
-
-            //if ((gamepad1.a || a) && where_are_you_now == 0){
-            //    a = true;
-            //    elevatorMotors(goingUpPower);
-            //    if(tick_past(calculateBrakingRange(lowPosition,motorLeft.getCurrentPosition()),motorLeft.getCurrentPosition())){
-            //        elevatorMotors(GoingUpSlowlyPower);
-            //        if (tick_past(lowPosition,motorLeft.getCurrentPosition())){
-            //            elevatorMotors(holdingPower);
-            //            where_are_you_now = 1;
-            //            a = false;
-            //        }
-            //    }
-            //}
-//
-            //if ((gamepad1.x || x) && where_are_you_now < 2){
-            //    x = true;
-            //    elevatorMotors(goingUpPower);
-            //    if(tick_past(calculateBrakingRange(middlePosition,motorLeft.getCurrentPosition()),motorLeft.getCurrentPosition())){
-            //        elevatorMotors(GoingUpSlowlyPower);
-            //        if (tick_past(middlePosition,motorLeft.getCurrentPosition())){
-            //            elevatorMotors(holdingPower);
-            //            where_are_you_now = 1;
-            //            x = false;
-            //        }
-            //    }
-            //}
-
-
             if (gamepad1.b){
                 elevatorMotors(goingDownPower);
             }
 
+            }
         }
     }
-}
+
 
