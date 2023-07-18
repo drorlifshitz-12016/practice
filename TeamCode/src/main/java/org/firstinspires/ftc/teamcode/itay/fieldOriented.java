@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.swerve.dependencies.Vector;
 
 @TeleOp
 public class fieldOriented extends LinearOpMode {
@@ -35,13 +36,9 @@ public class fieldOriented extends LinearOpMode {
         backRight .setDirection(DcMotorSimple.Direction.REVERSE);
         // endregion
 
-        double x1;
-        double y1;
+        Vector v1 = new Vector(0, 0);
+        Vector v2 = new Vector(0, 0);
 
-        double x2;
-        double y2;
-
-        double L;
         double beta;
         double alpha;
 
@@ -50,26 +47,23 @@ public class fieldOriented extends LinearOpMode {
         resetRuntime();
 
 
-            while (opModeIsActive()){
+        while (opModeIsActive()){
 
-            x1 = gamepad1.left_stick_x;
-            y1 = -gamepad1.left_stick_y;
+            v1.setByCardinal(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
-            alpha = Math.atan2(y1, x1);
+            alpha = v1.angle();
             beta = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-            L = Math.sqrt(x1 * x1 + y1 * y1);
 
-            x2 = L * Math.cos(alpha + beta);
-            y2 = L * Math.sin(alpha + beta);
+            v2.setByAngular(v1.length(), alpha + beta);
 
                 // region MOTOR POWER CALCULATION
                 // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
-                //                      [      straight       ] [       lateral       ] [         turn         ]
-                double frontRightPower =          -y2           +          x2           + gamepad1.right_stick_x;
-                double frontLeftPower  =          -y2           -          x2           - gamepad1.right_stick_x;
-                double backRightPower  =          -y2           -          x2           + gamepad1.right_stick_x;
-                double backLeftPower   =          -y2           +          x2           - gamepad1.right_stick_x;
+                //                      [        straight       ] [         lateral       ] [         turn         ]
+                double frontRightPower =          -v2.y           +          v2.x           + gamepad1.right_stick_x;
+                double frontLeftPower  =          -v2.y           -          v2.x           - gamepad1.right_stick_x;
+                double backRightPower  =          -v2.y           -          v2.x           + gamepad1.right_stick_x;
+                double backLeftPower   =          -v2.y           +          v2.x           - gamepad1.right_stick_x;
                 // endregion
 
                 // region NORMALIZE MOTOR POWER
