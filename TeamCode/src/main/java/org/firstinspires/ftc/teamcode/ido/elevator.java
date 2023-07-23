@@ -20,7 +20,7 @@ public class elevator extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
-        telemetry.addData("tick:", motorLeft.getCurrentPosition());
+        telemetry.addData(":", motorLeft.getCurrentPosition());
         while (opModeIsActive()){
             motorLeft.setPower(gamepad1.left_trigger);
             motorRight.setPower(gamepad1.left_trigger);
