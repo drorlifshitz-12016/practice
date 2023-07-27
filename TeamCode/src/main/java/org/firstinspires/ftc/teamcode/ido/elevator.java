@@ -39,10 +39,11 @@ public class elevator extends LinearOpMode {
             motorRight.setPower(0.65);
             motorMiddle.setPower(0.65);
 
-            if (motorRight.getCurrentPosition() == lowPosition && motorLeft.getCurrentPosition() == lowPosition && motorMiddle.getCurrentPosition() == lowPosition)
+            if (motorRight.getCurrentPosition() == lowPosition && motorLeft.getCurrentPosition() == lowPosition && motorMiddle.getCurrentPosition() == lowPosition) {
                 motorLeft.setPower(0.23);
                 motorRight.setPower(0.23);
                 motorMiddle.setPower(0.23);
+                }
             }
 
             telemetry.addData("leftmotor", motorLeft.getCurrentPosition());
