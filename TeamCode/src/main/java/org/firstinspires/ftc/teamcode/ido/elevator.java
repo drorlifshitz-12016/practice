@@ -30,9 +30,6 @@ public class elevator extends LinearOpMode {
         if(gamepad1.a == true){
             motorLeft.setPower(1);
             motorRight.setPower(1);
-            wait(1);
-            motorLeft.setPower(0);
-            motorRight.setPower(0);
         }
 
 
