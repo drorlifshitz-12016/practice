@@ -25,6 +25,11 @@ public class Vector {
         y *= v.y;
     }
 
+    public static double anglee(double x,double y){
+        if (x < 0) {return Math.atan2(y, x) + 180;}
+        else {return Math.atan2(y, x);}
+    }
+
     public double length(){
         return x*x + y*y;
     }

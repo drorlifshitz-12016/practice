@@ -25,7 +25,7 @@ public class elevator extends LinearOpMode {
         return (wantedPos - currentPos) * 3 / 5;
     }
     public static boolean tick_past(int wantedPos, int currentPosition){
-        return currentPosition > wantedPos;
+        return wantedPos < currentPosition ;
     }
     public static void elevatorMotors(double motorPower) {
         motorMiddle.setPower(motorPower);
@@ -102,9 +102,6 @@ public class elevator extends LinearOpMode {
                     }
 
                 }
-            if (gamepad1.b){
-                elevatorMotors(goingDownPower);
-            }
 
             }
         }
