@@ -6,12 +6,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.Base64;
 
 @TeleOp
 public class moduleTesting extends LinearOpMode {
+
+    /* fl
+    final static double minPower = 0.12;
+    final static double maxPower = 1  ;
+
+    final static double acceptableError  = 0.02;
+    final static double slowingDistance  = 0.1;
+    final static double deceleratingDist = 0.13;
+     */
 
     final static double minPower = 0.12;
     final static double maxPower = 1  ;
@@ -35,23 +46,32 @@ public class moduleTesting extends LinearOpMode {
         AnalogInput encoderFL = hardwareMap.get(AnalogInput.class, "frontLeft");
         // endregion
 
-        //servoFR.setPower(0.5);
-        //servoFL.setPower(0.5);
-        //servoBR.setPower(0.5);
-        //servoBL.setPower(0.5);
+        // region MOTORS
+        DcMotor fr = hardwareMap.dcMotor.get("frontRight");
+        DcMotor fl = hardwareMap.dcMotor.get("frontLeft");
+        DcMotor br = hardwareMap.dcMotor.get("backRight");
+        DcMotor bl = hardwareMap.dcMotor.get("backLeft");
+        // endregion
+
+        VoltageSensor batteryVoltage = hardwareMap.voltageSensor.get("Control Hub");
+
 
         waitForStart();
         if(isStopRequested()) { return; }
         resetRuntime();
 
-        while (opModeIsActive()){
-            servoFL.setPower(calcPower(calcDist(gamepad1.left_trigger, encoderFL.getVoltage() / encoderFL.getMaxVoltage())));
+        telemetry.setAutoClear(false);
 
-            telemetry.addData("encoderFR", encoderFR.getVoltage() / encoderFR.getMaxVoltage());
-            telemetry.addData("encoderBR", encoderBR.getVoltage() / encoderBR.getMaxVoltage());
-            telemetry.addData("encoderBL", encoderBL.getVoltage() / encoderBL.getMaxVoltage());
-            telemetry.addData("encoderFL", encoderFL.getVoltage() / encoderFL.getMaxVoltage());
-            telemetry.update();
+        while (opModeIsActive()){
+            servoFR.setPower(calcPower(calcDist(0.00, encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+            servoFL.setPower(calcPower(calcDist(0.21, encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+            servoBR.setPower(calcPower(calcDist(0.39, encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+            servoBL.setPower(calcPower(calcDist(0.35, encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+
+            fr.setPower(gamepad1.left_trigger);
+            fl.setPower(gamepad1.left_trigger);
+            br.setPower(gamepad1.left_trigger);
+            bl.setPower(gamepad1.left_trigger);
         }
     }
     public static double calcDist(double targetPos, double currentPos){
