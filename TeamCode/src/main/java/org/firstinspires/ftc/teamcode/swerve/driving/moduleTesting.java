@@ -14,36 +14,14 @@ import java.util.Base64;
 
 @TeleOp
 public class moduleTesting extends LinearOpMode {
-
-    /* fl
-    final static double minPower = 0.12;
-    final static double maxPower = 1  ;
-
-    final static double acceptableError  = 0.02;
-    final static double slowingDistance  = 0.1;
-    final static double deceleratingDist = 0.13;
-     */
-
-    final static double minPower = 0.12;
-    final static double maxPower = 1  ;
-
-    final static double acceptableError  = 0.02;
-    final static double slowingDistance  = 0.1;
-    final static double deceleratingDist = 0.13;
     @Override
     public void runOpMode() throws InterruptedException {
+        // region INITIALIZE
         // region SERVOS
         CRServo servoFR = hardwareMap.get(CRServo.class, "frontRight");
         CRServo servoFL = hardwareMap.get(CRServo.class, "frontLeft");
         CRServo servoBR = hardwareMap.get(CRServo.class, "backRight");
         CRServo servoBL = hardwareMap.get(CRServo.class, "backLeft");
-        // endregion
-
-        // region ENCODERS
-        AnalogInput encoderFR = hardwareMap.get(AnalogInput.class, "frontRight");
-        AnalogInput encoderBR = hardwareMap.get(AnalogInput.class, "backRight");
-        AnalogInput encoderBL = hardwareMap.get(AnalogInput.class, "backLeft");
-        AnalogInput encoderFL = hardwareMap.get(AnalogInput.class, "frontLeft");
         // endregion
 
         // region MOTORS
@@ -53,27 +31,46 @@ public class moduleTesting extends LinearOpMode {
         DcMotor bl = hardwareMap.dcMotor.get("backLeft");
         // endregion
 
-        VoltageSensor batteryVoltage = hardwareMap.voltageSensor.get("Control Hub");
+        // region ENCODERS
+        AnalogInput encoderFR = hardwareMap.get(AnalogInput.class, "frontRight");
+        AnalogInput encoderBR = hardwareMap.get(AnalogInput.class, "backRight");
+        AnalogInput encoderBL = hardwareMap.get(AnalogInput.class, "backLeft");
+        AnalogInput encoderFL = hardwareMap.get(AnalogInput.class, "frontLeft");
+        // endregion
 
+        VoltageSensor batteryVoltage = hardwareMap.voltageSensor.get("Control Hub");
+        // endregion
 
         waitForStart();
         if(isStopRequested()) { return; }
         resetRuntime();
 
-        telemetry.setAutoClear(false);
-
         while (opModeIsActive()){
+            // region SET SERVO POWERS
             servoFR.setPower(calcPower(calcDist(0.00, encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
             servoFL.setPower(calcPower(calcDist(0.21, encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
             servoBR.setPower(calcPower(calcDist(0.39, encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
             servoBL.setPower(calcPower(calcDist(0.35, encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+            // endregion
 
+            // region SET MOTOR POWERS
             fr.setPower(gamepad1.left_trigger);
             fl.setPower(gamepad1.left_trigger);
             br.setPower(gamepad1.left_trigger);
             bl.setPower(gamepad1.left_trigger);
+            // endregion
+
+            // region TELEMETRY
+            telemetry.addData("FR", encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
+            telemetry.addData("FL", encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
+            telemetry.addData("BR", encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
+            telemetry.addData("BL", encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
+            telemetry.update();
+            // endregion
         }
     }
+
+    // region MOVEMENT DEFINING FUNCTIONS
     public static double calcDist(double targetPos, double currentPos){
         return (targetPos - currentPos + 1.5) % 1 - 0.5;
     }
@@ -81,6 +78,15 @@ public class moduleTesting extends LinearOpMode {
         if (dist > 0) { return -moveTypeDefinition( dist); }
         else          { return  moveTypeDefinition(-dist); }
     }
+
+    // region CONSTANTS
+    final static double minPower = 0.12;
+    final static double maxPower = 1  ;
+
+    final static double acceptableError  = 0.02;
+    final static double slowingDistance  = 0.1;
+    final static double deceleratingDist = 0.13;
+    // endregion
     public static double moveTypeDefinition(double x){
         if      (x < acceptableError ) { return 0; }
         else if (x < slowingDistance ) { return minPower; }
@@ -91,5 +97,5 @@ public class moduleTesting extends LinearOpMode {
         // linear deceleration
         return (x - slowingDistance) * (maxPower - minPower) / (deceleratingDist - slowingDistance) + minPower;
     }
-
+    // endregion
 }
