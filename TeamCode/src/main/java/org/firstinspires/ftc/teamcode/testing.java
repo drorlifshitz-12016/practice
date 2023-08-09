@@ -34,17 +34,21 @@ public class testing extends LinearOpMode {
         DcMotor bl = hardwareMap.dcMotor.get("backLeft");
         // endregion
 
-        VoltageSensor batteryVoltage = hardwareMap.voltageSensor.get("Control Hub");
-
         waitForStart();
         if(isStopRequested()) { return; }
         resetRuntime();
 
         while (opModeIsActive()){
-            telemetry.addData("encoderFR", encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("encoderBL", encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("encoderBR", encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("encoderFL", encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
+            fr.setPower(gamepad1.left_trigger);
+            fl.setPower(gamepad1.left_trigger);
+            br.setPower(gamepad1.left_trigger);
+            bl.setPower(gamepad1.left_trigger);
+
+
+            telemetry.addData("FR", encoderFR.getVoltage() / encoderFR.getMaxVoltage());
+            telemetry.addData("FL", encoderFL.getVoltage() / encoderFL.getMaxVoltage());
+            telemetry.addData("BR", encoderBR.getVoltage() / encoderBR.getMaxVoltage());
+            telemetry.addData("BL", encoderBL.getVoltage() / encoderBL.getMaxVoltage());
             telemetry.update();
         }
     }

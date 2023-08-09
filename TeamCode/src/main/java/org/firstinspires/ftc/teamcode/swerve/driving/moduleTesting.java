@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -16,29 +17,11 @@ import java.util.Base64;
 public class moduleTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        // region INITIALIZE
-        // region SERVOS
-        CRServo servoFR = hardwareMap.get(CRServo.class, "frontRight");
-        CRServo servoFL = hardwareMap.get(CRServo.class, "frontLeft");
-        CRServo servoBR = hardwareMap.get(CRServo.class, "backRight");
-        CRServo servoBL = hardwareMap.get(CRServo.class, "backLeft");
-        // endregion
-
-        // region MOTORS
-        DcMotor fr = hardwareMap.dcMotor.get("frontRight");
-        DcMotor fl = hardwareMap.dcMotor.get("frontLeft");
-        DcMotor br = hardwareMap.dcMotor.get("backRight");
-        DcMotor bl = hardwareMap.dcMotor.get("backLeft");
-        // endregion
-
-        // region ENCODERS
-        AnalogInput encoderFR = hardwareMap.get(AnalogInput.class, "frontRight");
-        AnalogInput encoderBR = hardwareMap.get(AnalogInput.class, "backRight");
-        AnalogInput encoderBL = hardwareMap.get(AnalogInput.class, "backLeft");
-        AnalogInput encoderFL = hardwareMap.get(AnalogInput.class, "frontLeft");
-        // endregion
-
-        VoltageSensor batteryVoltage = hardwareMap.voltageSensor.get("Control Hub");
+        // region MODULES
+        swerveModule moduleFR = new swerveModule(hardwareMap, "frontRight", 0.793);
+        swerveModule moduleFL = new swerveModule(hardwareMap, "frontLeft" , 0.2  );
+        swerveModule moduleBR = new swerveModule(hardwareMap, "backRight" , 0.395);
+        swerveModule moduleBL = new swerveModule(hardwareMap, "backLeft"  , 0.365);
         // endregion
 
         waitForStart();
@@ -46,54 +29,108 @@ public class moduleTesting extends LinearOpMode {
         resetRuntime();
 
         while (opModeIsActive()){
-            // region SET SERVO POWERS
-            servoFR.setPower(calcPower(calcDist(0.00, encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
-            servoFL.setPower(calcPower(calcDist(0.21, encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
-            servoBR.setPower(calcPower(calcDist(0.39, encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
-            servoBL.setPower(calcPower(calcDist(0.35, encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage())));
+            // region SET POWER
+            double power = Math.pow(Math.pow(gamepad1.right_stick_y, 2) + Math.pow(gamepad1.right_stick_x, 2), 0.5);
+
+            moduleFR.setPower(power);
+            moduleFL.setPower(power);
+            moduleBR.setPower(power);
+            moduleBL.setPower(power);
             // endregion
 
-            // region SET MOTOR POWERS
-            fr.setPower(gamepad1.left_trigger);
-            fl.setPower(gamepad1.left_trigger);
-            br.setPower(gamepad1.left_trigger);
-            bl.setPower(gamepad1.left_trigger);
+            // region SET ANGLE
+            double angle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI;
+
+            if (power > 0.1) {
+                moduleFR.setWantedAngle(angle);
+                moduleFL.setWantedAngle(angle);
+                moduleBR.setWantedAngle(angle);
+                moduleBL.setWantedAngle(angle);
+            }
             // endregion
 
-            // region TELEMETRY
-            telemetry.addData("FR", encoderFR.getVoltage() / encoderFR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("FL", encoderFL.getVoltage() / encoderFL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("BR", encoderBR.getVoltage() / encoderBR.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.addData("BL", encoderBL.getVoltage() / encoderBL.getMaxVoltage() - 0.03 * batteryVoltage.getVoltage());
-            telemetry.update();
+            // region UPDATE
+            moduleFR.update();
+            moduleFL.update();
+            moduleBR.update();
+            moduleBL.update();
             // endregion
         }
     }
+}
+
+class swerveModule{
+    // region DEVICES
+    private final AnalogInput encoder;
+    private final CRServo servo;
+    private final DcMotor motor;
+    // endregion
+
+    // region VARIABLES
+    private double currentAngle;
+    private double wantedAngle = 0;
+    private final double angleOffset;
+    // endregion
+    public swerveModule(HardwareMap hm, String name, double angleOffset){
+        this(hm.get(AnalogInput.class, name),
+            hm.get(CRServo.class     , name),
+            hm.get(DcMotor.class     , name),
+            angleOffset);
+    }
+    public swerveModule(AnalogInput encoder, CRServo servo, DcMotor motor, double angleOffset){
+        this.encoder = encoder;
+        this.servo = servo;
+        this.motor = motor;
+        this.angleOffset = angleOffset;
+    }
+
+    // region GETTERS AND SETTERS
+    public double getCurrentAngle(){
+        return currentAngle;
+    }
+    public void setWantedAngle(double angle){
+        wantedAngle = angle;
+    }
+    public double getWantedAngle(){
+        return wantedAngle;
+    }
+    public void setPower(double power){
+        motor.setPower(power);
+    }
+    // endregion
+
+    public void update(){
+        // update the current angle
+        currentAngle = encoder.getVoltage() / encoder.getMaxVoltage() - angleOffset;
+
+        // update the power of the servo
+        servo.setPower(calcPower(calcAngleDifference(wantedAngle, currentAngle)));
+    }
 
     // region MOVEMENT DEFINING FUNCTIONS
-    public static double calcDist(double targetPos, double currentPos){
-        return (targetPos - currentPos + 1.5) % 1 - 0.5;
+    private static double calcAngleDifference(double targetAngle, double currentAngle){
+        return (targetAngle - currentAngle + 1.5) % 1 - 0.5;
     }
-    public static double calcPower(double dist){
-        if (dist > 0) { return -moveTypeDefinition( dist); }
-        else          { return  moveTypeDefinition(-dist); }
+    private static double calcPower(double angleDifference){
+        if (angleDifference > 0) { return -moveTypeDefinition( angleDifference); }
+        else                     { return  moveTypeDefinition(-angleDifference); }
     }
 
     // region CONSTANTS
-    final static double minPower = 0.12;
-    final static double maxPower = 1  ;
+    private final static double minPower = 0.12;
+    private final static double maxPower = 1  ;
 
-    final static double acceptableError  = 0.02;
-    final static double slowingDistance  = 0.1;
-    final static double deceleratingDist = 0.13;
+    private final static double acceptableError  = 0.02;
+    private final static double slowingDistance  = 0.1;
+    private final static double deceleratingDist = 0.13;
     // endregion
-    public static double moveTypeDefinition(double x){
+    private static double moveTypeDefinition(double x){
         if      (x < acceptableError ) { return 0; }
         else if (x < slowingDistance ) { return minPower; }
         else if (x < deceleratingDist) { return decelerationTypeDefinition(x); }
         else                           { return maxPower; }
     }
-    public static double decelerationTypeDefinition(double x){
+    private static double decelerationTypeDefinition(double x){
         // linear deceleration
         return (x - slowingDistance) * (maxPower - minPower) / (deceleratingDist - slowingDistance) + minPower;
     }
