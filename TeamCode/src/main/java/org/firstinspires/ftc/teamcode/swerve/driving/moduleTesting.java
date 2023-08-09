@@ -42,10 +42,10 @@ public class moduleTesting extends LinearOpMode {
             double angle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI;
 
             if (power > 0.1) {
-                moduleFR.setWantedAngle(angle);
-                moduleFL.setWantedAngle(angle);
-                moduleBR.setWantedAngle(angle);
-                moduleBL.setWantedAngle(angle);
+                moduleFR.setWantedAngle((Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI + 1) % 1);
+                moduleFL.setWantedAngle((Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI + 1) % 1);
+                moduleBR.setWantedAngle((Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI + 1) % 1);
+                moduleBL.setWantedAngle((Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) / 2 / Math.PI + 1) % 1);
             }
             // endregion
 
@@ -54,6 +54,18 @@ public class moduleTesting extends LinearOpMode {
             moduleFL.update();
             moduleBR.update();
             moduleBL.update();
+            // endregion
+
+            // region TELEMETRY
+            telemetry.addData("FR wanted angle", moduleFR.wantedAngle);
+            telemetry.addData("FL wanted angle", moduleFL.wantedAngle);
+            telemetry.addData("BR wanted angle", moduleBR.wantedAngle);
+            telemetry.addData("BL wanted angle", moduleBL.wantedAngle);
+            telemetry.addData("FR current angle", moduleFR.currentAngle);
+            telemetry.addData("FL current angle", moduleFL.currentAngle);
+            telemetry.addData("BR current angle", moduleBR.currentAngle);
+            telemetry.addData("BL current angle", moduleBL.currentAngle);
+            telemetry.update();
             // endregion
         }
     }
@@ -67,8 +79,8 @@ class swerveModule{
     // endregion
 
     // region VARIABLES
-    private double currentAngle;
-    private double wantedAngle = 0;
+    public double currentAngle;
+    public double wantedAngle = 0;
     private final double angleOffset;
     // endregion
     public swerveModule(HardwareMap hm, String name, double angleOffset){
@@ -95,21 +107,21 @@ class swerveModule{
         return wantedAngle;
     }
     public void setPower(double power){
-        motor.setPower(power);
+        motor.setPower((Math.abs(wantedAngle - currentAngle) > 0.25 ? -1: 1) * power);
     }
     // endregion
 
     public void update(){
         // update the current angle
-        currentAngle = encoder.getVoltage() / encoder.getMaxVoltage() - angleOffset;
+        currentAngle = (encoder.getVoltage() / encoder.getMaxVoltage() - angleOffset + 1) % 1;
 
         // update the power of the servo
         servo.setPower(calcPower(calcAngleDifference(wantedAngle, currentAngle)));
     }
 
     // region MOVEMENT DEFINING FUNCTIONS
-    private static double calcAngleDifference(double targetAngle, double currentAngle){
-        return (targetAngle - currentAngle + 1.5) % 1 - 0.5;
+    private double calcAngleDifference(double targetAngle, double currentAngle){
+        return (targetAngle - currentAngle + 1.25) % 0.5 - 0.25;
     }
     private static double calcPower(double angleDifference){
         if (angleDifference > 0) { return -moveTypeDefinition( angleDifference); }
