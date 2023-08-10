@@ -53,7 +53,7 @@ public class swerveModule {
         setWantedAngle(v.getAngle());
     }
 
-    public void stop() {
+    public void idle() {
         setPower(0);
         setWantedAngle(defaultAngle);
     }
@@ -66,6 +66,9 @@ public class swerveModule {
         // update the power of the servo
         servo.setPower(calcPower(calcAngleDifference(wantedAngle, currentAngle)));
     }
+
+
+
 
     // region MOVEMENT DEFINING FUNCTIONS
     private double calcAngleDifference(double targetAngle, double currentAngle) {
