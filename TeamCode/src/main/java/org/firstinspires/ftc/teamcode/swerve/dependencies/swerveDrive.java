@@ -48,10 +48,10 @@ public class swerveDrive {
         // endregion
 
         // region MODULES
-        moduleFR = new swerveModule(hm, "frontRight", 0.793, 0.125);
-        moduleFL = new swerveModule(hm, "frontLeft" , 0.2  , 0.875);
-        moduleBR = new swerveModule(hm, "backRight" , 0.395, 0.375);
-        moduleBL = new swerveModule(hm, "backLeft"  , 0.365, 0.625);
+        moduleFR = new swerveModule(hm, "frontRight", 1 - 0.793, 0.125);
+        moduleFL = new swerveModule(hm, "frontLeft" , 1 - 0.2  , 0.875);
+        moduleBR = new swerveModule(hm, "backRight" , 1 - 0.395, 0.375);
+        moduleBL = new swerveModule(hm, "backLeft"  , 1 - 0.365, 0.625);
         // endregion
     }
 

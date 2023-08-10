@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class swerveModule {
     // region DEVICES
-    private final AnalogInput encoder;
+    private final Encoder encoder;
     private final CRServo servo;
     private final DcMotor motor;
     // endregion
@@ -15,23 +15,21 @@ public class swerveModule {
     // region VARIABLES
     private double currentAngle;
     private double wantedAngle = 0;
-    private final double angleOffset;
 
     private final double defaultAngle;
 
     // endregion
     public swerveModule(HardwareMap hm, String name, double angleOffset, double defaultAngle) {
-        this(hm.get(AnalogInput.class, name),
+        this(new Encoder(hm.get(AnalogInput.class, name), angleOffset),
                 hm.get(CRServo.class, name),
                 hm.get(DcMotor.class, name),
-                angleOffset, defaultAngle);
+                defaultAngle);
     }
 
-    public swerveModule(AnalogInput encoder, CRServo servo, DcMotor motor, double angleOffset, double defaultAngle) {
+    public swerveModule(Encoder encoder, CRServo servo, DcMotor motor, double defaultAngle) {
         this.encoder = encoder;
         this.servo = servo;
         this.motor = motor;
-        this.angleOffset = angleOffset;
         this.defaultAngle = defaultAngle;
     }
 
@@ -61,7 +59,7 @@ public class swerveModule {
 
     public void update() {
         // update the current angle
-        currentAngle = (encoder.getVoltage() / encoder.getMaxVoltage() - angleOffset + 1) % 1;
+        currentAngle = encoder.getAngle();
 
         // update the power of the servo
         servo.setPower(calcPower(calcAngleDifference(wantedAngle, currentAngle)));
