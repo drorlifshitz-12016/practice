@@ -12,6 +12,7 @@ public class Vector{
         return Math.sqrt(x*x + y*y);
     }
     public double getAngle(){
+        // normalizing the atan2 function to be between 0 and 1 (instead of -PI and PI)
         return (Math.atan2(x, y) / 2 / Math.PI + 1) % 1;
     }
     public void set(double x, double y){

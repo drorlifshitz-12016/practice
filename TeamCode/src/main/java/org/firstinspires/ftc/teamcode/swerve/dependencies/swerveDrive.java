@@ -15,14 +15,8 @@ public class swerveDrive {
     private static BNO055IMU imu;
     private static double robotAngle;
     private static void updateRobotAngle() {
-        // get the angle from the imu
-        robotAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle / 2 / Math.PI;
-
-        // normalize the angle
-        if (robotAngle < 0) {
-            robotAngle += 1;
-        }
-        robotAngle = 1 - robotAngle;
+        // get the angle from the imu and normalize it to be between 0 and 1 in the wanted direction
+        robotAngle = 1 - (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle / 2 / Math.PI + 1) % 1;
     }
     // endregion
 
@@ -33,7 +27,7 @@ public class swerveDrive {
     private static swerveModule moduleBL;
     // endregion
 
-    // region MOVEMENT VECTOR
+    // region MOVEMENT VECTORS
     private static final Vector vectorFR = new Vector();
     private static final Vector vectorFL = new Vector();
     private static final Vector vectorBR = new Vector();
@@ -41,20 +35,26 @@ public class swerveDrive {
     // endregion
     public static void initialize(HardwareMap hm){
         // region IMU
+        // get the imu
         imu = hm.get(BNO055IMU .class, "imu");
+
+        // create the parameter list
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+
+        // set the parameters onto the imu
         imu.initialize(parameters);
         // endregion
 
         // region MODULES
-        moduleFR = new swerveModule(hm, "frontRight", 1 - 0.793, 0.125);
-        moduleFL = new swerveModule(hm, "frontLeft" , 1 - 0.2  , 0.875);
-        moduleBR = new swerveModule(hm, "backRight" , 1 - 0.395, 0.375);
-        moduleBL = new swerveModule(hm, "backLeft"  , 1 - 0.365, 0.625);
+        moduleFR = new swerveModule(hm, "frontRight", 0.207, 0.125);
+        moduleFL = new swerveModule(hm, "frontLeft" , 0.8  , 0.875);
+        moduleBR = new swerveModule(hm, "backRight" , 0.605, 0.375);
+        moduleBL = new swerveModule(hm, "backLeft"  , 0.635, 0.625);
         // endregion
     }
 
+    // make me into a separated thread please ;(
     public static void start(Gamepad gamepad){
         active = true;
         while (active){
@@ -82,22 +82,28 @@ public class swerveDrive {
             // endregion
 
             // region NORMALIZE THE MOVEMENT VECTORS
-            double maxLength = maxLength(vectorFR, vectorFL, vectorBR, vectorBL);
+            double maxStrength = Math.max(
+                    Math.max(vectorFR.getLength(),
+                             vectorFL.getLength()),
+                    Math.max(vectorBR.getLength(),
+                             vectorBL.getLength())
+            );
 
-            if (maxLength > 1){
-                vectorFR.normalize(maxLength);
-                vectorFL.normalize(maxLength);
-                vectorBR.normalize(maxLength);
-                vectorBL.normalize(maxLength);
+            // we can only set the motor power between -1 and 1
+            if (maxStrength > 1){
+                vectorFR.normalize(maxStrength);
+                vectorFL.normalize(maxStrength);
+                vectorBR.normalize(maxStrength);
+                vectorBL.normalize(maxStrength);
             }
             // endregion
 
             // region APPLY THE MOVEMENT VECTORS
-            if (maxLength > 0.1) {
-                moduleFR.setVector(vectorFR);
-                moduleFL.setVector(vectorFL);
-                moduleBR.setVector(vectorBR);
-                moduleBL.setVector(vectorBL);
+            if (maxStrength > 0.1) {
+                moduleFR.setByVector(vectorFR);
+                moduleFL.setByVector(vectorFL);
+                moduleBR.setByVector(vectorBR);
+                moduleBL.setByVector(vectorBL);
             } else {
                 moduleFR.idle();
                 moduleFL.idle();
