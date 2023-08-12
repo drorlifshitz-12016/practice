@@ -14,59 +14,55 @@ public class swerveModule {
 
     // region VARIABLES
     private double currentAngle;
-    private double wantedAngle = 0;
+    private double wantedAngle;
 
     private final double defaultAngle;
-
     // endregion
+
     public swerveModule(HardwareMap hm, String name, double angleOffset, double defaultAngle) {
         this(new Encoder(hm.get(AnalogInput.class, name), angleOffset),
                 hm.get(CRServo.class, name),
                 hm.get(DcMotor.class, name),
                 defaultAngle);
     }
-
     public swerveModule(Encoder encoder, CRServo servo, DcMotor motor, double defaultAngle) {
         this.encoder = encoder;
         this.servo = servo;
         this.motor = motor;
         this.defaultAngle = defaultAngle;
+        this.wantedAngle = defaultAngle;
     }
 
-    // region GETTERS AND SETTERS
-    public double getCurrentAngle() {
-        return currentAngle;
-    }
+    private void setPower(double power) {
+        /*
+            if { Math.abs(wantedAngle - currentAngle) > 0.25 } is true that means that the wheel
+            is backwards to the wanted direction and that we should reverse the power to achieve
+            the wanted affect.
+        */
 
-    public void setWantedAngle(double angle) {
-        wantedAngle = angle;
-    }
+        if (Math.abs(wantedAngle - currentAngle) > 0.25) motor.setPower(-power);
+        else                                             motor.setPower( power);
 
-    public void setPower(double power) {
-        motor.setPower((Math.abs(wantedAngle - currentAngle) > 0.25 ? -1 : 1) * power);
     }
+    public void setByVector(Vector v) {
+        // set the power and direction of the module according to the vector
 
-    public void setVector(Vector v) {
         setPower(v.getLength());
-        setWantedAngle(v.getAngle());
+        wantedAngle = v.getAngle();
     }
-
     public void idle() {
-        setPower(0);
-        setWantedAngle(defaultAngle);
-    }
-    // endregion
+        // stop movement and go to the default position
 
+        setPower(0);
+        wantedAngle = defaultAngle;
+    }
     public void update() {
         // update the current angle
         currentAngle = encoder.getAngle();
 
-        // update the power of the servo
+        // update the power set to the servo
         servo.setPower(calcPower(calcAngleDifference(wantedAngle, currentAngle)));
     }
-
-
-
 
     // region MOVEMENT DEFINING FUNCTIONS
     private double calcAngleDifference(double targetAngle, double currentAngle) {
