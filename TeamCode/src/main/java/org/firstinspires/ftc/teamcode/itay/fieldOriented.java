@@ -49,6 +49,8 @@ public class fieldOriented extends LinearOpMode {
 
         while (opModeIsActive()){
 
+
+
             v1.setByCardinal(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
             alpha = v1.angle();

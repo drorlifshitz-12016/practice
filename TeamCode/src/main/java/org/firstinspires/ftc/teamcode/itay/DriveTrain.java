@@ -25,9 +25,7 @@ public class DriveTrain extends LinearOpMode {
 
         // region WAIT FOR START
         waitForStart();
-        if(isStopRequested()){
-            return;
-        }
+        if(isStopRequested()){return;}
         resetRuntime();
         // endregion
 
@@ -63,6 +61,9 @@ public class DriveTrain extends LinearOpMode {
             backRight .setPower(backRightPower );
             backLeft  .setPower(backLeftPower  );
             // endregion
+
+            frontLeft.setPower(gamepad1.left_trigger);
+
         }
     }
 }
