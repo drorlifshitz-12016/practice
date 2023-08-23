@@ -1,48 +1,36 @@
 package org.firstinspires.ftc.teamcode.swerve.dependencies;
 
-public class Vector {
+public class Vector{
     public double x, y;
+    public Vector(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+    public Vector(){}
 
-    public Vector(double X, double Y){
-        x = X;
-        y = Y;
+    public double getLength(){
+        return Math.sqrt(x*x + y*y);
     }
-
-    public void add(Vector v){
-        x += v.x;
-        y += v.y;
+    public double getAngle(){
+        return (Math.atan2(x, y) / 2 / Math.PI + 1) % 1;
     }
-    public void sub(Vector v){
-        x -= v.x;
-        y -= v.y;
+    public void set(double x, double y){
+        this.x = x;
+        this.y = y;
     }
-    public void div(Vector v){
-        x /= v.x;
-        y /= v.y;
+    public void add(double x, double y){
+        this.x += x;
+        this.y += y;
     }
-    public void mult(Vector v){
-        x *= v.x;
-        y *= v.y;
+    public void setByAngle(double a, double l){
+        x = Math.sin(a * Math.PI * 2) * l;
+        y = Math.cos(a * Math.PI * 2) * l;
     }
-
-    public static double anglee(double x,double y){
-        if (x < 0) {return Math.atan2(y, x) + 180;}
-        else {return Math.atan2(y, x);}
+    public void normalize(double length){
+        x /= length;
+        y /= length;
     }
-
-    public double length(){
-        return x*x + y*y;
-    }
-    public double angle(){
-        return Math.atan2(y, x);
-    }
-
-    public void setByAngular(double l, double a){
-        x = l * Math.cos(a);
-        y = l * Math.sin(a);
-    }
-    public void setByCardinal(double X, double Y){
-        x = X;
-        y = Y;
+    public void addAngle(double angle){
+        setByAngle((getAngle() + angle) % 1, getLength());
     }
 }
