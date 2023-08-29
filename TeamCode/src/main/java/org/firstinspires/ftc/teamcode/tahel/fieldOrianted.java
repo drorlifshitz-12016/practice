@@ -47,29 +47,28 @@ public class fieldOrianted extends LinearOpMode {
         return new double[]{x2, y2};
     }
 }
-/*
-    public BNO055IMU imu;
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//  public BNO055IMU imu;
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//      imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
+//      BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//      parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//      imu.initialize(parameters);
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+//      BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
 
-public static double getRobotAngle() {
-        // get the angle from the imu
-        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
-        // normalize the angle
-        if (angle < 0) {
-            angle += Math.PI * 2;
-        }
-        angle = Math.PI * 2 - angle;
+//blic static double getRobotAngle() {
+//      // get the angle from the imu
+//      double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
-        return angle;
-    }
-*/
+//      // normalize the angle
+//      if (angle < 0) {
+//          angle += Math.PI * 2;
+//      }
+//      angle = Math.PI * 2 - angle;
+
+//      return angle;
+//  }
+
