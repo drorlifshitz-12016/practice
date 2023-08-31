@@ -51,12 +51,12 @@ public class fieldOriented extends LinearOpMode {
 
 
 
-            //v1.setByCardinal(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            v1.setByCardinal(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
-            //alpha = v1.angle();
+            alpha = v1.angle();
             beta = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
-            //v2.setByAngular(v1.length(), alpha + beta);
+            v2.setByAngular(v1.length(), alpha + beta);
 
                 // region MOTOR POWER CALCULATION
                 // calculating the motor powers based on the three basic movements (straight, lateral and turn)
