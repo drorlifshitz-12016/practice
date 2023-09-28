@@ -62,8 +62,6 @@ public class DriveTrain extends LinearOpMode {
             backLeft  .setPower(backLeftPower  );
             // endregion
 
-            frontLeft.setPower(gamepad1.left_trigger);
-
         }
     }
 }

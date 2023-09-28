@@ -1,28 +1,27 @@
 package org.firstinspires.ftc.teamcode.itay;
 
-import static org.firstinspires.ftc.teamcode.itay.ExtendArm.extendArm;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class Test extends LinearOpMode {
 
+    public static double Odometry(double IMU,double encoderX, double encoderY){
+        //x = האיקס שיגיע מהחיישנים
+        //y = הוואי שיגיע מהחיישנים
+        double x = encoderX * (3 * Math.PI);
+        double y = encoderY * (3 * Math.PI);
+        double[] encoderi = {x, y};
+        return 0;
+    }
+
     @Override
     public void runOpMode() {
+
+        //                      | CM |
+        final double wheel_speen = 3 * Math.PI;
 
         // region GET DRIVETRAIN MOTORS
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
@@ -30,6 +29,12 @@ public class Test extends LinearOpMode {
         DcMotor backRight  = hardwareMap.dcMotor.get("backRight" );
         DcMotor backLeft   = hardwareMap.dcMotor.get("backLeft"  );
         // endregion
+
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // reversing the right motors in order to have intuition for their movement direction
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);

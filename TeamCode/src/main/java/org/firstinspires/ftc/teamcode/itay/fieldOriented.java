@@ -65,10 +65,10 @@ public class fieldOriented extends LinearOpMode {
             // calculating the motor powers based on the three basic movements (straight, lateral and turn)
 
             //                      [        straight       ] [         lateral       ] [         turn         ]
-            double frontRightPower = -v2.y + v2.x + gamepad1.right_stick_x;
-            double frontLeftPower = -v2.y - v2.x - gamepad1.right_stick_x;
-            double backRightPower = -v2.y - v2.x + gamepad1.right_stick_x;
-            double backLeftPower = -v2.y + v2.x - gamepad1.right_stick_x;
+            double frontRightPower=            -v2.y          +           v2.x         + gamepad1.right_stick_x;
+            double frontLeftPower =            -v2.y          -           v2.x         - gamepad1.right_stick_x;
+            double backRightPower =            -v2.y          -           v2.x         + gamepad1.right_stick_x;
+            double backLeftPower  =            -v2.y          +           v2.x         - gamepad1.right_stick_x;
             // endregion
 
             // region NORMALIZE MOTOR POWER
