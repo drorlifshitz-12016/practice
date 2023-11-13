@@ -33,5 +33,17 @@ public class SubmatTest extends LinearOpMode {
         PipelineTest pipelineTest = new PipelineTest();
         webcam.setPipeline(pipelineTest);
 
+        waitForStart();
+
+        while(opModeIsActive()) {
+
+            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.update();
+
+            if(gamepad1.a) {
+                webcam.stopStreaming();
+            }
+        }
+
     }
 }
