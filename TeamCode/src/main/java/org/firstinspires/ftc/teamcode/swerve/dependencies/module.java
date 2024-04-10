@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.swerve.dependencies;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.itay.workingSwerve.dependencies.Encoder;
 
 public class module {
 
